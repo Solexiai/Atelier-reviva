@@ -1,0 +1,15 @@
+<svg viewBox="0 0 260 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">Logo Atelier Reviva</title>
+  <desc id="logoDesc">Logo textuel Atelier Reviva avec une commode stylisée.</desc>
+  <text x="130" y="34" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="24" fill="#a78553">Nouveau Chapitre</text>
+  <text x="130" y="68" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="16" fill="#b09467">La Montréalaise devient</text>
+  <text x="130" y="92" text-anchor="middle" font-family="'DM Sans', sans-serif" letter-spacing="6" font-size="14" fill="#a78553">ATELIER</text>
+  <text x="130" y="124" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="56" fill="#a78553">Reviva</text>
+  <rect x="97" y="138" width="66" height="26" rx="2" stroke="#b09467" stroke-width="1.4"/>
+  <rect x="97" y="128" width="66" height="12" rx="2" stroke="#b09467" stroke-width="1.4"/>
+  <line x1="130" y1="138" x2="130" y2="164" stroke="#b09467" stroke-width="1"/>
+  <circle cx="117" cy="144" r="1.8" fill="#b09467"/>
+  <circle cx="143" cy="144" r="1.8" fill="#b09467"/>
+  <line x1="103" y1="164" x2="101" y2="170" stroke="#b09467" stroke-width="1.4" stroke-linecap="round"/>
+  <line x1="157" y1="164" x2="159" y2="170" stroke="#b09467" stroke-width="1.4" stroke-linecap="round"/>
+</svg>
