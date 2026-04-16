@@ -1,0 +1,15 @@
+<svg viewBox="0 0 250 150" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoCompactTitle logoCompactDesc">
+  <title id="logoCompactTitle">Logo Atelier Reviva compact</title>
+  <desc id="logoCompactDesc">Logo Atelier Reviva avec commode stylisée.</desc>
+
+  <text x="125" y="24" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="14" letter-spacing="8" fill="#AE8C54">ATELIER</text>
+  <text x="125" y="62" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="72" font-weight="500" fill="#AE8C54">Reviva</text>
+
+  <rect x="92" y="79" width="66" height="31" rx="2" stroke="#AE8C54" stroke-width="2"/>
+  <rect x="92" y="66" width="66" height="15" rx="2" stroke="#AE8C54" stroke-width="2"/>
+  <line x1="125" y1="79" x2="125" y2="110" stroke="#AE8C54" stroke-width="1.6"/>
+  <circle cx="114" cy="87" r="2.2" fill="#AE8C54"/>
+  <circle cx="136" cy="87" r="2.2" fill="#AE8C54"/>
+  <line x1="97" y1="110" x2="94" y2="119" stroke="#AE8C54" stroke-width="2" stroke-linecap="round"/>
+  <line x1="153" y1="110" x2="156" y2="119" stroke="#AE8C54" stroke-width="2" stroke-linecap="round"/>
+</svg>
