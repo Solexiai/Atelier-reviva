@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atelier Reviva — Site en construction</title>
+  <meta name="description" content="Atelier Reviva — Le site est en construction. Contactez-nous par téléphone pour toute demande." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f8f3eb;
+      --surface: #fffaf2;
+      --gold: #a78553;
+      --gold-soft: #cbb08a;
+      --text: #35363a;
+      --text-soft: #57585d;
+      --border: #e7d7be;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "DM Sans", Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 50% 0, #fffdf9 0, var(--bg) 42%, #f4ece1 100%);
+      min-height: 100vh;
+      line-height: 1.45;
+    }
+
+    .construction-page {
+      width: min(1160px, calc(100% - 2.4rem));
+      margin: 0 auto;
+      padding: 2.4rem 0 2rem;
+    }
+
+    .brand { text-align: center; margin-bottom: 1.2rem; }
+
+    .brand-logo {
+      width: min(310px, 72vw);
+      height: auto;
+      object-fit: contain;
+    }
+
+    .panel {
+      background: color-mix(in oklab, var(--surface) 92%, white 8%);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: clamp(1.2rem, 3vw, 2rem);
+      box-shadow: 0 10px 35px rgba(102, 79, 43, 0.08);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: clamp(1.2rem, 2.8vw, 2.2rem);
+      align-items: center;
+    }
+
+    h1 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      color: var(--gold);
+      font-weight: 600;
+      font-size: clamp(2.15rem, 3.8vw, 4rem);
+      line-height: 1.05;
+      margin: 0 0 1rem;
+    }
+
+    .lead {
+      margin: 0;
+      font-size: clamp(1.08rem, 1.8vw, 1.9rem);
+      color: var(--text-soft);
+    }
+
+    .phone-block {
+      margin: 1.25rem 0 1.7rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      color: var(--gold);
+      text-decoration: none;
+      font-size: clamp(1.2rem, 2.2vw, 2rem);
+      font-weight: 700;
+    }
+
+    .phone-icon { font-size: 1.1em; }
+
+    h2 {
+      margin: 0 0 0.7rem;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      color: var(--gold);
+      font-size: clamp(1.8rem, 2.7vw, 2.6rem);
+      line-height: 1.1;
+    }
+
+    .hours {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.45rem;
+      max-width: 390px;
+    }
+
+    .hours li {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 1px solid #efe4d2;
+      padding-bottom: 0.32rem;
+      font-size: clamp(1rem, 1.4vw, 1.2rem);
+    }
+
+    .hours span:last-child { font-weight: 500; }
+
+    .portrait {
+      margin: 0;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      border-radius: 22px;
+      border: 2px solid var(--gold-soft);
+      overflow: hidden;
+      background: #ede0cd;
+      box-shadow: 0 14px 26px rgba(91, 70, 38, 0.15);
+    }
+
+    .portrait img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    .footline {
+      margin-top: 1.4rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: #8b785a;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(1.1rem, 2.1vw, 1.9rem);
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .portrait { max-width: 520px; margin-inline: auto; }
+    }
+  </style>
+</head>
+<body>
+  <!-- TEMPORAIRE: page d'accueil "site en construction" pour la route / -->
+  <main class="construction-page">
+    <div class="brand">
+      <img
+        src="assets/images/atelier-reviva-logo.svg"
+        class="brand-logo"
+        alt="Logo Atelier Reviva"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+
+    <section class="panel" aria-labelledby="construction-title">
+      <div class="grid">
+        <article>
+          <h1 id="construction-title">Le site est en construction</h1>
+          <p class="lead">Merci pour votre patience.<br />En attendant, vous pouvez me rejoindre au&nbsp;:</p>
+
+          <a href="tel:+15144306221" class="phone-block" aria-label="Appeler Atelier Reviva au 514 430 6221">
+            <span class="phone-icon" aria-hidden="true">📞</span>
+            <span>(514) 430-6221</span>
+          </a>
+
+          <h2>Horaires</h2>
+          <ul class="hours" aria-label="Horaires d'ouverture">
+            <li><span>jeudi</span><span>9h00–16h30</span></li>
+            <li><span>vendredi</span><span>9h00–16h30</span></li>
+            <li><span>samedi</span><span>Fermé</span></li>
+            <li><span>dimanche</span><span>Fermé</span></li>
+            <li><span>lundi</span><span>9h00–16h30</span></li>
+            <li><span>mardi</span><span>9h00–16h30</span></li>
+            <li><span>mercredi</span><span>9h00–16h30</span></li>
+          </ul>
+        </article>
+
+        <figure class="portrait">
+          <img
+            src="https://www.genspark.ai/api/files/s/3dLphMwm"
+            alt="Photo de la fondatrice d'Atelier Reviva"
+            loading="eager"
+          />
+        </figure>
+      </div>
+
+      <p class="footline">Atelier Reviva – Nouveau Chapitre ♡ Merci d'être là.</p>
+    </section>
+  </main>
+</body>
+</html>

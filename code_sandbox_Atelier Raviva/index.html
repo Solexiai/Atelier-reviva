@@ -3,200 +3,637 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Atelier Reviva — Site en construction</title>
-  <meta name="description" content="Atelier Reviva — Le site est en construction. Contactez-nous par téléphone pour toute demande." />
+  <title>Atelier Reviva – Revalorisation de meubles au Québec</title>
+  <meta name="description" content="Atelier Reviva redonne vie aux meubles avec une approche soignée, durable et élégante. Restauration, revalorisation et vente de meubles revalorisés au Québec." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://atelierreviva.ca/" />
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #f8f3eb;
-      --surface: #fffaf2;
-      --gold: #a78553;
-      --gold-soft: #cbb08a;
-      --text: #35363a;
-      --text-soft: #57585d;
-      --border: #e7d7be;
-    }
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 
-    * { box-sizing: border-box; }
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css" />
 
-    body {
-      margin: 0;
-      font-family: "DM Sans", Arial, sans-serif;
-      color: var(--text);
-      background: radial-gradient(circle at 50% 0, #fffdf9 0, var(--bg) 42%, #f4ece1 100%);
-      min-height: 100vh;
-      line-height: 1.45;
-    }
-
-    .construction-page {
-      width: min(1160px, calc(100% - 2.4rem));
-      margin: 0 auto;
-      padding: 2.4rem 0 2rem;
-    }
-
-    .brand { text-align: center; margin-bottom: 1.2rem; }
-
-    .brand-logo {
-      width: min(310px, 72vw);
-      height: auto;
-      object-fit: contain;
-    }
-
-    .panel {
-      background: color-mix(in oklab, var(--surface) 92%, white 8%);
-      border: 1px solid var(--border);
-      border-radius: 26px;
-      padding: clamp(1.2rem, 3vw, 2rem);
-      box-shadow: 0 10px 35px rgba(102, 79, 43, 0.08);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: clamp(1.2rem, 2.8vw, 2.2rem);
-      align-items: center;
-    }
-
-    h1 {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      color: var(--gold);
-      font-weight: 600;
-      font-size: clamp(2.15rem, 3.8vw, 4rem);
-      line-height: 1.05;
-      margin: 0 0 1rem;
-    }
-
-    .lead {
-      margin: 0;
-      font-size: clamp(1.08rem, 1.8vw, 1.9rem);
-      color: var(--text-soft);
-    }
-
-    .phone-block {
-      margin: 1.25rem 0 1.7rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.7rem;
-      color: var(--gold);
-      text-decoration: none;
-      font-size: clamp(1.2rem, 2.2vw, 2rem);
-      font-weight: 700;
-    }
-
-    .phone-icon { font-size: 1.1em; }
-
-    h2 {
-      margin: 0 0 0.7rem;
-      font-family: "Cormorant Garamond", Georgia, serif;
-      color: var(--gold);
-      font-size: clamp(1.8rem, 2.7vw, 2.6rem);
-      line-height: 1.1;
-    }
-
-    .hours {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      gap: 0.45rem;
-      max-width: 390px;
-    }
-
-    .hours li {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-      border-bottom: 1px solid #efe4d2;
-      padding-bottom: 0.32rem;
-      font-size: clamp(1rem, 1.4vw, 1.2rem);
-    }
-
-    .hours span:last-child { font-weight: 500; }
-
-    .portrait {
-      margin: 0;
-      width: 100%;
-      aspect-ratio: 4 / 5;
-      border-radius: 22px;
-      border: 2px solid var(--gold-soft);
-      overflow: hidden;
-      background: #ede0cd;
-      box-shadow: 0 14px 26px rgba(91, 70, 38, 0.15);
-    }
-
-    .portrait img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-    }
-
-    .footline {
-      margin-top: 1.4rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
-      text-align: center;
-      color: #8b785a;
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: clamp(1.1rem, 2.1vw, 1.9rem);
-    }
-
-    @media (max-width: 900px) {
-      .grid { grid-template-columns: 1fr; }
-      .portrait { max-width: 520px; margin-inline: auto; }
-    }
-  </style>
+  <!-- Schema LocalBusiness -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Atelier Reviva",
+    "description": "Revalorisation de meubles au Québec. Restauration, peinture et transformation de mobilier.",
+    "url": "https://atelierreviva.ca",
+    "areaServed": ["Québec", "Rive-Sud", "Montérégie", "Montréal"],
+    "serviceType": "Revalorisation de meubles"
+  }
+  </script>
+  <!-- TEMPORAIRE: redirection réversible de la home vers la page de construction -->
+  <meta http-equiv="refresh" content="0; url=construction.html" />
+  <script>window.location.replace('construction.html');</script>
 </head>
 <body>
-  <!-- TEMPORAIRE: page d'accueil "site en construction" pour la route / -->
-  <main class="construction-page">
-    <div class="brand">
-      <img
-        src="assets/images/atelier-reviva-logo.svg"
-        class="brand-logo"
-        alt="Logo Atelier Reviva"
-        loading="eager"
-        fetchpriority="high"
-      />
-    </div>
+  <noscript><p style="padding:1rem;text-align:center;">Redirection en cours… <a href="construction.html">Accéder à la page temporaire</a>.</p></noscript>
 
-    <section class="panel" aria-labelledby="construction-title">
-      <div class="grid">
-        <article>
-          <h1 id="construction-title">Le site est en construction</h1>
-          <p class="lead">Merci pour votre patience.<br />En attendant, vous pouvez me rejoindre au&nbsp;:</p>
+  <!-- ═══════════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════════ -->
+  <header class="site-header" id="header">
+    <div class="header-inner">
 
-          <a href="tel:+15144306221" class="phone-block" aria-label="Appeler Atelier Reviva au 514 430 6221">
-            <span class="phone-icon" aria-hidden="true">📞</span>
-            <span>(514) 430-6221</span>
-          </a>
-
-          <h2>Horaires</h2>
-          <ul class="hours" aria-label="Horaires d'ouverture">
-            <li><span>jeudi</span><span>9h00–16h30</span></li>
-            <li><span>vendredi</span><span>9h00–16h30</span></li>
-            <li><span>samedi</span><span>Fermé</span></li>
-            <li><span>dimanche</span><span>Fermé</span></li>
-            <li><span>lundi</span><span>9h00–16h30</span></li>
-            <li><span>mardi</span><span>9h00–16h30</span></li>
-            <li><span>mercredi</span><span>9h00–16h30</span></li>
-          </ul>
-        </article>
-
-        <figure class="portrait">
-          <img
-            src="https://www.genspark.ai/api/files/s/3dLphMwm"
-            alt="Photo de la fondatrice d'Atelier Reviva"
-            loading="eager"
-          />
-        </figure>
+      <!-- Réseaux sociaux — gauche -->
+      <div class="header-social">
+        <a href="#" aria-label="Facebook" class="social-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="#" aria-label="Instagram" class="social-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#" aria-label="Pinterest" class="social-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.853 0 1.267.641 1.267 1.408 0 .858-.546 2.140-.828 3.33-.236.995.499 1.806 1.476 1.806 1.772 0 3.137-1.868 3.137-4.566 0-2.387-1.715-4.057-4.163-4.057-2.836 0-4.5 2.127-4.5 4.327 0 .857.33 1.775.742 2.277a.3.3 0 0 1 .069.285c-.076.312-.243.996-.276 1.134-.044.183-.145.222-.334.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.522 0 10-4.477 10-10S17.522 2 12 2z"/></svg>
+        </a>
       </div>
 
-      <p class="footline">Atelier Reviva – Nouveau Chapitre ♡ Merci d'être là.</p>
+      <!-- Logo — centre -->
+      <a href="index.html" class="header-logo" aria-label="Atelier Reviva — Accueil">
+        <div class="logo-circle">
+          <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="70" cy="70" r="68" stroke="#C47B5A" stroke-width="1"/>
+            <circle cx="70" cy="70" r="62" stroke="#C47B5A" stroke-width="0.5" stroke-dasharray="3 4"/>
+            <!-- Commode stylisée -->
+            <rect x="38" y="68" width="64" height="28" rx="2" stroke="#B89A6A" stroke-width="1.2" fill="none"/>
+            <rect x="38" y="60" width="64" height="10" rx="1.5" stroke="#B89A6A" stroke-width="1.2" fill="none"/>
+            <line x1="70" y1="68" x2="70" y2="96" stroke="#B89A6A" stroke-width="0.8"/>
+            <circle cx="57" cy="74" r="2" fill="#B89A6A"/>
+            <circle cx="83" cy="74" r="2" fill="#B89A6A"/>
+            <line x1="44" y1="96" x2="44" y2="102" stroke="#B89A6A" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="96" y1="96" x2="96" y2="102" stroke="#B89A6A" stroke-width="1.2" stroke-linecap="round"/>
+            <!-- Texte -->
+            <text x="70" y="45" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="7" font-weight="400" letter-spacing="4" fill="#8B6E5A">ATELIER</text>
+            <text x="70" y="56" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="13" font-weight="500" letter-spacing="1" fill="#8B6E5A">Reviva</text>
+            <text x="70" y="118" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="5.5" font-weight="300" letter-spacing="3" fill="#B89A6A">REVALORISATION</text>
+            <text x="70" y="126" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="5.5" font-weight="300" letter-spacing="3" fill="#B89A6A">DE MEUBLES</text>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Menu hamburger — mobile -->
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+    </div>
+
+    <!-- Navigation principale -->
+    <nav class="main-nav" id="mainNav" aria-label="Navigation principale">
+      <ul class="nav-list">
+        <li><a href="index.html" class="nav-link active">Accueil</a></li>
+        <li><a href="meubles.html" class="nav-link">Meubles à vendre</a></li>
+        <li><a href="services.html" class="nav-link">Services</a></li>
+        <li><a href="portfolio.html" class="nav-link">Portfolio</a></li>
+        <li><a href="formation.html" class="nav-link">Formation</a></li>
+        <li><a href="apropos.html" class="nav-link">À propos</a></li>
+        <li><a href="blog.html" class="nav-link">Blog</a></li>
+        <li><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ═══════════════════════════════════════════════
+         HERO — Bannière principale
+    ═══════════════════════════════════════════════ -->
+    <section class="hero" aria-label="Bannière principale">
+      <div class="hero-image-wrap">
+        <img
+          src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1800&q=85&auto=format&fit=crop"
+          alt="Intérieur épuré avec meuble restauré sur fond beige et terracotta — Atelier Reviva"
+          class="hero-img"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <div class="hero-overlay"></div>
+      </div>
+
+      <div class="hero-card">
+        <p class="hero-eyebrow">Artisane québécoise</p>
+        <h1 class="hero-title">Bienvenue chez<br><em>Atelier Reviva</em></h1>
+        <p class="hero-sub">Renaissance du mobilier avec art, élégance et caractère.</p>
+        <div class="hero-cta">
+          <a href="meubles.html" class="btn btn-primary">Voir les meubles disponibles</a>
+          <a href="contact.html" class="btn btn-outline">Demander une soumission</a>
+        </div>
+      </div>
+
+      <!-- Bandeau éditorial bas -->
+      <div class="hero-bar" aria-hidden="true">
+        <span>Élégance épurée</span>
+        <span class="bar-dot"></span>
+        <span>Art &amp; Terracotta</span>
+        <span class="bar-dot"></span>
+        <span>Galerie d'exception</span>
+      </div>
     </section>
+
+    <!-- ═══════════════════════════════════════════════
+         INTRODUCTION ÉDITORIALE
+    ═══════════════════════════════════════════════ -->
+    <section class="intro section-pad">
+      <div class="intro-inner">
+
+        <!-- Portrait fondatrice -->
+        <div class="intro-portrait-col">
+          <div class="intro-portrait-wrap">
+            <img
+              src="https://www.genspark.ai/api/files/s/3dLphMwm"
+              alt="Juliette Delannoy, fondatrice d'Atelier Reviva — revalorisation de meubles au Québec"
+              class="intro-portrait-img"
+              loading="eager"
+            />
+          </div>
+          <p class="intro-portrait-name">Juliette Delannoy</p>
+          <p class="intro-portrait-role">Fondatrice &amp; artisane</p>
+        </div>
+
+        <!-- Texte éditorial -->
+        <div class="intro-text-col">
+          <p class="intro-label">Notre philosophie</p>
+          <h2 class="intro-title">Transformer l'ancien<br>en pièce <em>remarquable</em></h2>
+          <p class="intro-body">
+            Chez Atelier Reviva, chaque meuble est choisi pour son caractère et sa structure.
+            Nous lui offrons une seconde vie soignée — alliant finitions artisanales, harmonie des matières
+            et sensibilité esthétique — pour qu'il trouve naturellement sa place dans un intérieur d'aujourd'hui.
+          </p>
+          <a href="portfolio.html" class="btn btn-text">Découvrir nos réalisations <span aria-hidden="true">→</span></a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         PILIERS / VALEURS — Icônes légères
+    ═══════════════════════════════════════════════ -->
+    <section class="pillars section-pad-sm" aria-label="Nos engagements">
+      <div class="container">
+        <div class="pillars-grid">
+
+          <div class="pillar-item">
+            <div class="pillar-icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none" stroke="#C47B5A" stroke-width="1.2">
+                <path d="M20 6 C12 6 7 12 7 20 C7 28 12 34 20 34 C28 34 33 28 33 20"/>
+                <path d="M26 8 L33 8 L33 15"/>
+                <path d="M33 8 L22 19"/>
+              </svg>
+            </div>
+            <h3 class="pillar-title">Savoir-faire artisanal</h3>
+            <p class="pillar-text">Chaque pièce est traitée avec les meilleures techniques de restauration et de finition.</p>
+          </div>
+
+          <div class="pillar-item">
+            <div class="pillar-icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none" stroke="#C47B5A" stroke-width="1.2">
+                <rect x="8" y="16" width="24" height="16" rx="2"/>
+                <path d="M12 16 V12 Q20 6 28 12 V16"/>
+                <line x1="20" y1="22" x2="20" y2="28"/>
+              </svg>
+            </div>
+            <h3 class="pillar-title">Pièces uniques</h3>
+            <p class="pillar-text">Aucune reproduction en série. Chaque création est une édition singulière, pensée dans ses détails.</p>
+          </div>
+
+          <div class="pillar-item">
+            <div class="pillar-icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none" stroke="#C47B5A" stroke-width="1.2">
+                <circle cx="20" cy="20" r="13"/>
+                <path d="M14 20 C14 14 20 10 26 14"/>
+                <path d="M26 20 C26 26 20 30 14 26"/>
+              </svg>
+            </div>
+            <h3 class="pillar-title">Approche durable</h3>
+            <p class="pillar-text">Prolonger la vie d'un meuble, c'est un geste ancré dans le respect du mobilier et de l'environnement.</p>
+          </div>
+
+          <div class="pillar-item">
+            <div class="pillar-icon" aria-hidden="true">
+              <svg viewBox="0 0 40 40" fill="none" stroke="#C47B5A" stroke-width="1.2">
+                <path d="M8 32 L20 10 L32 32"/>
+                <line x1="12" y1="25" x2="28" y2="25"/>
+              </svg>
+            </div>
+            <h3 class="pillar-title">Service personnalisé</h3>
+            <p class="pillar-text">Un accompagnement humain et attentionné, du premier contact jusqu'à la remise de la pièce.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         PORTFOLIO — Avant / Après
+    ═══════════════════════════════════════════════ -->
+    <section class="portfolio-preview section-pad" aria-label="Aperçu portfolio avant/après">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-label">Réalisations</p>
+          <h2 class="section-title">L'art de la <em>transformation</em></h2>
+        </div>
+
+        <div class="portfolio-grid">
+
+          <article class="portfolio-card">
+            <div class="before-after">
+              <div class="ba-pane ba-before">
+                <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=700&q=80&auto=format&fit=crop" alt="Commode ancienne avant restauration — Atelier Reviva" loading="lazy" />
+                <span class="ba-label">Avant</span>
+              </div>
+              <div class="ba-pane ba-after">
+                <img src="https://images.unsplash.com/photo-1556909172-54557c7e4fb7?w=700&q=80&auto=format&fit=crop" alt="Commode restaurée en terracotta — Atelier Reviva" loading="lazy" />
+                <span class="ba-label after">Après</span>
+              </div>
+            </div>
+            <div class="portfolio-card-body">
+              <h3 class="portfolio-card-title">Commode Haussmann</h3>
+              <p class="portfolio-card-text">Restauration complète, finition terracotta mate, quincaillerie laiton.</p>
+            </div>
+          </article>
+
+          <article class="portfolio-card">
+            <div class="before-after">
+              <div class="ba-pane ba-before">
+                <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=700&q=80&auto=format&fit=crop" alt="Buffet vintage avant transformation — Atelier Reviva" loading="lazy" />
+                <span class="ba-label">Avant</span>
+              </div>
+              <div class="ba-pane ba-after">
+                <img src="https://images.unsplash.com/photo-1549187774-b4e9b0445b41?w=700&q=80&auto=format&fit=crop" alt="Buffet vintage revalorisé, blanc cassé — Atelier Reviva" loading="lazy" />
+                <span class="ba-label after">Après</span>
+              </div>
+            </div>
+            <div class="portfolio-card-body">
+              <h3 class="portfolio-card-title">Buffet Années 50</h3>
+              <p class="portfolio-card-text">Décapage, réparation, peinture ivoire satiné, intérieur tapissé.</p>
+            </div>
+          </article>
+
+          <article class="portfolio-card">
+            <div class="before-after">
+              <div class="ba-pane ba-before">
+                <img src="https://images.unsplash.com/photo-1505693314120-0d443867891c?w=700&q=80&auto=format&fit=crop" alt="Table basse en bois avant restauration — Atelier Reviva" loading="lazy" />
+                <span class="ba-label">Avant</span>
+              </div>
+              <div class="ba-pane ba-after">
+                <img src="https://images.unsplash.com/photo-1618220252344-8ec99ec624b1?w=700&q=80&auto=format&fit=crop" alt="Table basse restaurée, finition bois naturel — Atelier Reviva" loading="lazy" />
+                <span class="ba-label after">Après</span>
+              </div>
+            </div>
+            <div class="portfolio-card-body">
+              <h3 class="portfolio-card-title">Table Basse Cannage</h3>
+              <p class="portfolio-card-text">Remplacement du plateau cannage, teinture bois chêne blond, vernis mat.</p>
+            </div>
+          </article>
+
+        </div>
+
+        <div class="section-footer">
+          <a href="portfolio.html" class="btn btn-outline">Voir le portfolio complet</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         SERVICES — Aperçu
+    ═══════════════════════════════════════════════ -->
+    <section class="services-preview section-pad-sm" style="background: var(--sand-light);" aria-label="Nos services">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-label">Expertises</p>
+          <h2 class="section-title">Ce que nous <em>offrons</em></h2>
+        </div>
+
+        <div class="services-grid">
+
+          <div class="service-item">
+            <div class="service-number">01</div>
+            <h3 class="service-name">Revalorisation de meubles</h3>
+            <p class="service-desc">Transformation complète d'une pièce ancienne en un meuble à la fois contemporain et chargé d'histoire.</p>
+            <a href="services.html" class="link-arrow">En savoir plus <span>→</span></a>
+          </div>
+
+          <div class="service-item">
+            <div class="service-number">02</div>
+            <h3 class="service-name">Peinture et finition</h3>
+            <p class="service-desc">Application soignée de peintures à la craie, minérales ou satinées, avec un résultat durable et raffiné.</p>
+            <a href="services.html" class="link-arrow">En savoir plus <span>→</span></a>
+          </div>
+
+          <div class="service-item">
+            <div class="service-number">03</div>
+            <h3 class="service-name">Restauration esthétique</h3>
+            <p class="service-desc">Réparations invisibles, remise en état et mise en valeur du caractère d'origine de votre mobilier.</p>
+            <a href="services.html" class="link-arrow">En savoir plus <span>→</span></a>
+          </div>
+
+          <div class="service-item">
+            <div class="service-number">04</div>
+            <h3 class="service-name">Conseils sur mesure</h3>
+            <p class="service-desc">Un regard professionnel pour vous guider dans le choix des teintes, des matières et du traitement idéal.</p>
+            <a href="services.html" class="link-arrow">En savoir plus <span>→</span></a>
+          </div>
+
+        </div>
+
+        <div class="section-footer">
+          <a href="contact.html" class="btn btn-primary">Obtenir une soumission</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         MEUBLES À VENDRE — Aperçu boutique
+    ═══════════════════════════════════════════════ -->
+    <section class="shop-preview section-pad" aria-label="Meubles à vendre">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-label">Boutique</p>
+          <h2 class="section-title">Meubles <em>disponibles</em></h2>
+          <p class="section-intro">Chaque pièce est choisie, restaurée et présentée avec soin. Transactions sécurisées via Shopify.</p>
+        </div>
+
+        <!-- Badge Shopify -->
+        <div class="shopify-badge" role="note">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Paiement et transaction sécurisés via Shopify</span>
+        </div>
+
+        <div class="products-grid">
+
+          <article class="product-card">
+            <div class="product-img-wrap">
+              <img src="https://images.unsplash.com/photo-1567016432779-094069958ea5?w=600&q=80&auto=format&fit=crop" alt="Commode terracotta revalorisée — Atelier Reviva" loading="lazy" />
+              <span class="product-badge">Disponible</span>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">Commode Terracotta</h3>
+              <p class="product-details">120 × 50 × 90 cm · Bois massif · Style vintage</p>
+              <div class="product-footer">
+                <span class="product-price">695 $</span>
+                <a href="#shopify-redirect" class="btn btn-primary btn-sm">Acheter via Shopify</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-img-wrap">
+              <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80&auto=format&fit=crop" alt="Buffet ivoire satiné revalorisé — Atelier Reviva" loading="lazy" />
+              <span class="product-badge">Disponible</span>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">Buffet Ivoire Satiné</h3>
+              <p class="product-details">160 × 45 × 85 cm · Bois peint · Style scandinave</p>
+              <div class="product-footer">
+                <span class="product-price">845 $</span>
+                <a href="#shopify-redirect" class="btn btn-primary btn-sm">Acheter via Shopify</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-img-wrap">
+              <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600&q=80&auto=format&fit=crop" alt="Table de nuit revalorisée, finition naturelle — Atelier Reviva" loading="lazy" />
+              <span class="product-badge sold">Vendu</span>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">Table de Nuit Naturelle</h3>
+              <p class="product-details">50 × 40 × 60 cm · Chêne naturel · Style artisanal</p>
+              <div class="product-footer">
+                <span class="product-price">295 $</span>
+                <span class="btn btn-disabled btn-sm">Vendu</span>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <div class="section-footer">
+          <a href="meubles.html" class="btn btn-outline">Voir tous les meubles disponibles</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         FORMATION
+    ═══════════════════════════════════════════════ -->
+    <section class="formation-preview section-pad" aria-label="Formations Atelier Reviva">
+      <div class="formation-inner">
+        <div class="formation-img-col">
+          <img
+            src="https://images.unsplash.com/photo-1615529162924-f8605388461d?w=900&q=80&auto=format&fit=crop"
+            alt="Atelier de revalorisation de meubles — formation Atelier Reviva"
+            loading="lazy"
+          />
+        </div>
+        <div class="formation-text-col">
+          <p class="section-label">Formation</p>
+          <h2 class="section-title">Apprenez l'art de<br>revaloriser un meuble</h2>
+          <p class="formation-body">
+            Des ateliers guidés et accessibles pour apprendre à préparer, peindre et finir un meuble
+            avec méthode, goût et confiance. Du geste à la matière, une expérience complète.
+          </p>
+          <div class="formation-alert" role="alert">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <strong>Complet jusqu'en juin 2026</strong>
+          </div>
+          <p class="formation-wait">Les places sont très demandées. Rejoignez la liste d'attente pour être avisé en priorité des prochaines dates.</p>
+          <a href="formation.html" class="btn btn-primary">Joindre la liste d'attente</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         TÉMOIGNAGES
+    ═══════════════════════════════════════════════ -->
+    <section class="testimonials section-pad" style="background: var(--cream);" aria-label="Témoignages clients">
+      <div class="container">
+        <div class="section-header">
+          <p class="section-label">Témoignages</p>
+          <h2 class="section-title">Ce qu'ils <em>disent</em></h2>
+        </div>
+
+        <div class="testi-grid">
+
+          <blockquote class="testi-card">
+            <div class="testi-stars" aria-label="5 étoiles">★★★★★</div>
+            <p class="testi-quote">« La commode de ma grand-mère est méconnaissable. Le résultat est absolument magnifique — chaleureux, soigné, élégant. Je n'aurais jamais imaginé un tel rendu. »</p>
+            <footer class="testi-author">
+              <span class="testi-name">Marie-Josée L.</span>
+              <span class="testi-location">Rive-Sud, Québec</span>
+            </footer>
+          </blockquote>
+
+          <blockquote class="testi-card">
+            <div class="testi-stars" aria-label="5 étoiles">★★★★★</div>
+            <p class="testi-quote">« Professionnelle, attentionnée et très à l'écoute. Elle a su exactement ce que je voulais sans que je puisse même le nommer. Un savoir-faire exceptionnel. »</p>
+            <footer class="testi-author">
+              <span class="testi-name">Sophie B.</span>
+              <span class="testi-location">Montréal, Québec</span>
+            </footer>
+          </blockquote>
+
+          <blockquote class="testi-card">
+            <div class="testi-stars" aria-label="5 étoiles">★★★★★</div>
+            <p class="testi-quote">« J'ai suivi la formation et j'en suis revenue transformée autant que mon buffet ! Une expérience enrichissante, humaine, et infiniment inspirante. »</p>
+            <footer class="testi-author">
+              <span class="testi-name">Camille T.</span>
+              <span class="testi-location">Montérégie, Québec</span>
+            </footer>
+          </blockquote>
+
+        </div>
+
+        <div class="section-footer">
+          <a href="temoignages.html" class="btn btn-text">Lire tous les témoignages <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         À PROPOS — Bloc éditorial
+    ═══════════════════════════════════════════════ -->
+    <section class="about-preview section-pad" aria-label="À propos de l'atelier">
+      <div class="about-inner">
+        <div class="about-img-col">
+          <img
+            src="https://images.unsplash.com/photo-1513694203232-719a280e022f?w=900&q=80&auto=format&fit=crop"
+            alt="Fondatrice d'Atelier Reviva dans son atelier de revalorisation de meubles au Québec"
+            loading="lazy"
+            class="about-img"
+          />
+        </div>
+        <div class="about-text-col">
+          <p class="section-label">Artisane québécoise</p>
+          <h2 class="section-title">Une passion<br>pour la <em>transformation</em></h2>
+          <p class="about-body">
+            Atelier Reviva est né d'une conviction profonde : chaque meuble mérite une seconde vie.
+            Fondé au Québec avec le désir de marier savoir-faire artisanal et sensibilité contemporaine,
+            l'atelier se spécialise dans la revalorisation, la restauration esthétique et la transformation
+            de mobilier — avec un soin particulier pour les finitions, les teintes et le caractère de chaque pièce.
+          </p>
+          <a href="apropos.html" class="btn btn-outline">Découvrir notre histoire</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         CTA FINAL
+    ═══════════════════════════════════════════════ -->
+    <section class="cta-final section-pad" aria-label="Appel à l'action">
+      <div class="container-narrow cta-content">
+        <p class="section-label">Un projet en tête ?</p>
+        <h2 class="cta-title">Parlons de votre<br><em>meuble</em></h2>
+        <p class="cta-body">
+          Qu'il s'agisse d'une pièce de famille à restaurer, d'un meuble trouvé à transformer
+          ou d'un projet de décoration sur mesure — nous sommes là pour vous écouter.
+        </p>
+        <div class="cta-buttons">
+          <a href="contact.html" class="btn btn-primary">Parlez-nous de votre projet</a>
+          <a href="meubles.html" class="btn btn-outline">Voir les meubles disponibles</a>
+        </div>
+      </div>
+    </section>
+
   </main>
+
+  <!-- ═══════════════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════════════ -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+
+      <div class="footer-brand">
+        <a href="index.html" class="footer-logo-link" aria-label="Atelier Reviva">
+          <div class="footer-logo-mark">
+            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="40" cy="40" r="38" stroke="#C47B5A" stroke-width="0.8"/>
+              <rect x="20" y="38" width="40" height="18" rx="2" stroke="#B89A6A" stroke-width="0.9" fill="none"/>
+              <rect x="20" y="31" width="40" height="9" rx="1" stroke="#B89A6A" stroke-width="0.9" fill="none"/>
+              <line x1="40" y1="38" x2="40" y2="56" stroke="#B89A6A" stroke-width="0.6"/>
+              <circle cx="32" cy="43" r="1.5" fill="#B89A6A"/>
+              <circle cx="48" cy="43" r="1.5" fill="#B89A6A"/>
+              <line x1="24" y1="56" x2="24" y2="60" stroke="#B89A6A" stroke-width="0.9" stroke-linecap="round"/>
+              <line x1="56" y1="56" x2="56" y2="60" stroke="#B89A6A" stroke-width="0.9" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <p class="footer-brand-name">Atelier Reviva</p>
+            <p class="footer-brand-tag">Revalorisation de meubles</p>
+          </div>
+        </a>
+        <p class="footer-tagline">Redonner vie aux meubles avec élégance, durabilité et savoir-faire artisanal — au Québec.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Facebook" class="social-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="#" aria-label="Instagram" class="social-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" aria-label="Pinterest" class="social-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.853 0 1.267.641 1.267 1.408 0 .858-.546 2.140-.828 3.33-.236.995.499 1.806 1.476 1.806 1.772 0 3.137-1.868 3.137-4.566 0-2.387-1.715-4.057-4.163-4.057-2.836 0-4.5 2.127-4.5 4.327 0 .857.33 1.775.742 2.277a.3.3 0 0 1 .069.285c-.076.312-.243.996-.276 1.134-.044.183-.145.222-.334.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.522 0 10-4.477 10-10S17.522 2 12 2z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-links-col">
+        <h4 class="footer-heading">Navigation</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="meubles.html">Meubles à vendre</a></li>
+          <li><a href="portfolio.html">Portfolio</a></li>
+          <li><a href="formation.html">Formation</a></li>
+          <li><a href="apropos.html">À propos</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links-col">
+        <h4 class="footer-heading">Services</h4>
+        <ul class="footer-links">
+          <li><a href="services.html">Revalorisation de meubles</a></li>
+          <li><a href="services.html">Peinture et finition</a></li>
+          <li><a href="services.html">Restauration esthétique</a></li>
+          <li><a href="services.html">Conseils personnalisés</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="temoignages.html">Témoignages</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links-col">
+        <h4 class="footer-heading">Contact</h4>
+        <ul class="footer-links footer-contact">
+          <li>Québec &amp; Rive-Sud</li>
+          <li><a href="mailto:info@atelierreviva.ca">info@atelierreviva.ca</a></li>
+          <li><a href="tel:+14181234567">418 123-4567</a></li>
+          <li><a href="contact.html">Formulaire de contact</a></li>
+        </ul>
+        <div class="footer-shopify" role="note">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Paiements sécurisés via Shopify pour les meubles à vendre</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 Atelier Reviva. Tous droits réservés.</p>
+      <div class="footer-legal">
+        <a href="confidentialite.html">Politique de confidentialité</a>
+        <a href="conditions.html">Conditions d'utilisation</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
 </body>
 </html>
