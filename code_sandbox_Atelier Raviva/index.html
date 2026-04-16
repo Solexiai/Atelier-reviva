@@ -39,7 +39,7 @@
     .brand { text-align: center; margin-bottom: 1.2rem; }
 
     .brand-logo {
-      width: min(420px, 90vw);
+      width: min(310px, 72vw);
       height: auto;
       object-fit: contain;
     }
@@ -154,16 +154,13 @@
   <!-- TEMPORAIRE: page d'accueil "site en construction" pour la route / -->
   <main class="construction-page">
     <div class="brand">
-      <picture>
-        <source media="(max-width: 640px)" srcset="assets/images/atelier-reviva-logo-compact.svg" />
-        <img
-          src="assets/images/atelier-reviva-logo.svg"
-          class="brand-logo"
-          alt="Logo Atelier Reviva"
-          loading="eager"
-          fetchpriority="high"
-        />
-      </picture>
+      <img
+        src="assets/images/atelier-reviva-logo.svg"
+        class="brand-logo"
+        alt="Logo Atelier Reviva"
+        loading="eager"
+        fetchpriority="high"
+      />
     </div>
 
     <section class="panel" aria-labelledby="construction-title">
@@ -190,7 +187,6 @@
         </article>
 
         <figure class="portrait">
-          <!-- TEMPORAIRE: remplacez ce fichier SVG par votre photo finale (ou gardez le même nom) -->
           <img
             src="assets/images/atelier-reviva-photo.svg"
             alt="Photo de la fondatrice d'Atelier Reviva"
