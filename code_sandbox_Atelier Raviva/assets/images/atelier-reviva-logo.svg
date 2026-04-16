@@ -1,18 +1,15 @@
-<svg viewBox="0 0 320 280" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoTitle logoDesc">
-  <title id="logoTitle">Logo Atelier Reviva Nouveau Chapitre</title>
-  <desc id="logoDesc">Nouveau Chapitre, La Montréalaise devient Atelier Reviva avec commode stylisée.</desc>
-
-  <text x="160" y="48" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="48" font-weight="500" fill="#AE8C54">Nouveau Chapitre</text>
-  <text x="160" y="94" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="40" font-weight="500" fill="#AE8C54">La Montréalaise devient</text>
-
-  <text x="160" y="136" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="42" letter-spacing="11" fill="#AE8C54">ATELIER</text>
-  <text x="160" y="203" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="92" font-weight="500" fill="#AE8C54">Reviva</text>
-
-  <rect x="112" y="219" width="96" height="43" rx="2" stroke="#AE8C54" stroke-width="2.4"/>
-  <rect x="112" y="202" width="96" height="20" rx="2" stroke="#AE8C54" stroke-width="2.4"/>
-  <line x1="160" y1="219" x2="160" y2="262" stroke="#AE8C54" stroke-width="1.8"/>
-  <circle cx="143" cy="229" r="2.8" fill="#AE8C54"/>
-  <circle cx="177" cy="229" r="2.8" fill="#AE8C54"/>
-  <line x1="120" y1="262" x2="116" y2="275" stroke="#AE8C54" stroke-width="2.4" stroke-linecap="round"/>
-  <line x1="200" y1="262" x2="204" y2="275" stroke="#AE8C54" stroke-width="2.4" stroke-linecap="round"/>
+<svg viewBox="0 0 260 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">Logo Atelier Reviva</title>
+  <desc id="logoDesc">Logo textuel Atelier Reviva avec une commode stylisée.</desc>
+  <text x="130" y="34" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="24" fill="#a78553">Nouveau Chapitre</text>
+  <text x="130" y="68" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="16" fill="#b09467">La Montréalaise devient</text>
+  <text x="130" y="92" text-anchor="middle" font-family="'DM Sans', sans-serif" letter-spacing="6" font-size="14" fill="#a78553">ATELIER</text>
+  <text x="130" y="124" text-anchor="middle" font-family="'Cormorant Garamond', serif" font-size="56" fill="#a78553">Reviva</text>
+  <rect x="97" y="138" width="66" height="26" rx="2" stroke="#b09467" stroke-width="1.4"/>
+  <rect x="97" y="128" width="66" height="12" rx="2" stroke="#b09467" stroke-width="1.4"/>
+  <line x1="130" y1="138" x2="130" y2="164" stroke="#b09467" stroke-width="1"/>
+  <circle cx="117" cy="144" r="1.8" fill="#b09467"/>
+  <circle cx="143" cy="144" r="1.8" fill="#b09467"/>
+  <line x1="103" y1="164" x2="101" y2="170" stroke="#b09467" stroke-width="1.4" stroke-linecap="round"/>
+  <line x1="157" y1="164" x2="159" y2="170" stroke="#b09467" stroke-width="1.4" stroke-linecap="round"/>
 </svg>
