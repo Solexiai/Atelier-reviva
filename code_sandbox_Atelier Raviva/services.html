@@ -203,7 +203,9 @@
             <p>Merci ! Nous vous répondrons dans les 48 heures ouvrables avec votre soumission personnalisée.</p>
           </div>
 
-          <form id="soumissionForm" novalidate>
+          <form id="soumissionForm" action="https://formspree.io/f/mpppznoe" method="POST" enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="_subject" value="Nouvelle demande de soumission — Atelier Reviva" />
+            <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute; left:-9999px; width:1px; height:1px; opacity:0;" />
 
             <!-- Coordonnées -->
             <fieldset style="border:none; margin-bottom:2.5rem;">
@@ -225,7 +227,7 @@
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="telephone">Téléphone</label>
-                  <input type="tel" id="telephone" name="telephone" class="form-input" placeholder="418 000-0000" />
+                  <input type="tel" id="telephone" name="telephone" class="form-input" placeholder="514 000-0000" />
                 </div>
               </div>
               <div class="form-group">
@@ -357,7 +359,8 @@
             </fieldset>
 
             <div style="text-align:center;">
-              <button type="submit" class="btn btn-primary" style="padding:1rem 3.5rem; font-size:0.82rem;">
+              <p class="form-alert" id="formError" role="alert" hidden></p>
+              <button type="submit" id="soumissionSubmit" class="btn btn-primary" style="padding:1rem 3.5rem; font-size:0.82rem;">
                 Envoyer ma demande de soumission
               </button>
               <p style="font-size:0.74rem; color:var(--text-muted); margin-top:1rem;">Réponse garantie dans les 48 heures ouvrables · Soumission gratuite, sans engagement</p>
@@ -428,36 +431,209 @@
       });
     });
 
-    // Preview photos upload
-    const photoInput = document.getElementById('photos');
-    const photoPreview = document.getElementById('photoPreview');
-    if (photoInput) {
-      photoInput.addEventListener('change', () => {
-        photoPreview.innerHTML = '';
-        Array.from(photoInput.files).slice(0, 10).forEach(file => {
-          const reader = new FileReader();
-          reader.onload = e => {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            img.alt = file.name;
-            photoPreview.appendChild(img);
-          };
-          reader.readAsDataURL(file);
-        });
-      });
-    }
+    /* ═════════════════════════════════════════════
+       FORMULAIRE DE SOUMISSION — envoi via Formspree
+    ═════════════════════════════════════════════ */
+    (function () {
+      const form = document.getElementById('soumissionForm');
+      if (!form) return;
 
-    // Formulaire soumission
-    const form = document.getElementById('soumissionForm');
-    const success = document.getElementById('formSuccess');
-    if (form) {
-      form.addEventListener('submit', e => {
-        e.preventDefault();
-        form.style.display = 'none';
-        success.classList.add('visible');
-        window.scrollTo({ top: document.getElementById('soumission').offsetTop - 100, behavior: 'smooth' });
+      const success      = document.getElementById('formSuccess');
+      const errorBox     = document.getElementById('formError');
+      const submitBtn    = document.getElementById('soumissionSubmit');
+      const photoInput   = document.getElementById('photos');
+      const photoPreview = document.getElementById('photoPreview');
+      const uploadZone   = document.getElementById('uploadZone');
+
+      const MAX_PHOTOS = 10;
+      const MAX_SIZE   = 10 * 1024 * 1024; // 10 Mo
+      let photos = [];                     // photos retenues
+
+      /* ── Messages d'erreur sous les champs ── */
+      function fieldContainer(field) {
+        return field.type === 'checkbox' ? field.closest('.form-check') : field.closest('.form-group');
+      }
+
+      function setError(field, message) {
+        const box = fieldContainer(field);
+        let msg = box.querySelector('.form-error');
+        if (!msg) {
+          msg = document.createElement('p');
+          msg.className = 'form-error';
+          msg.id = (field.id || field.name) + '-error';
+          box.appendChild(msg);
+        }
+        msg.textContent = message;
+        field.classList.add('is-invalid');
+        field.setAttribute('aria-invalid', 'true');
+        field.setAttribute('aria-describedby', msg.id);
+      }
+
+      function clearError(field) {
+        const box = fieldContainer(field);
+        const msg = box && box.querySelector('.form-error');
+        if (msg) msg.remove();
+        field.classList.remove('is-invalid');
+        field.removeAttribute('aria-invalid');
+        field.removeAttribute('aria-describedby');
+      }
+
+      function validateField(field) {
+        const value = field.type === 'checkbox' ? field.checked : field.value.trim();
+        if (field.required && !value) {
+          setError(field, field.type === 'checkbox'
+            ? 'Veuillez accepter d\'être contacté(e) pour recevoir votre soumission.'
+            : field.tagName === 'SELECT' ? 'Veuillez faire un choix.' : 'Ce champ est obligatoire.');
+          return false;
+        }
+        if (field.type === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value)) {
+          setError(field, 'Veuillez entrer un courriel valide (ex. : nom@exemple.com).');
+          return false;
+        }
+        if (field.type === 'tel' && value && value.replace(/\D/g, '').length < 10) {
+          setError(field, 'Veuillez entrer un numéro à 10 chiffres.');
+          return false;
+        }
+        clearError(field);
+        return true;
+      }
+
+      const fields = form.querySelectorAll('input[required], select[required], textarea[required], input[type="email"], input[type="tel"]');
+      fields.forEach(field => {
+        const evt = (field.tagName === 'SELECT' || field.type === 'checkbox') ? 'change' : 'blur';
+        field.addEventListener(evt, () => validateField(field));
+        field.addEventListener('input', () => { if (field.classList.contains('is-invalid')) validateField(field); });
       });
-    }
+
+      /* ── Photos : ajout, limites, aperçu, retrait ── */
+      function showPhotoMessage(message) {
+        let msg = uploadZone.parentNode.querySelector('.form-error.photo-error');
+        if (!message) { if (msg) msg.remove(); return; }
+        if (!msg) {
+          msg = document.createElement('p');
+          msg.className = 'form-error photo-error';
+          uploadZone.after(msg);
+        }
+        msg.textContent = message;
+      }
+
+      function renderPreview() {
+        photoPreview.innerHTML = '';
+        photos.forEach((file, index) => {
+          const thumb = document.createElement('div');
+          thumb.className = 'upload-thumb';
+
+          const img = document.createElement('img');
+          img.alt = file.name;
+          img.src = URL.createObjectURL(file);
+          img.onload = () => URL.revokeObjectURL(img.src);
+          img.onerror = () => {               // HEIC : pas d'aperçu dans certains navigateurs
+            const label = document.createElement('span');
+            label.className = 'upload-thumb-name';
+            label.textContent = file.name;
+            img.replaceWith(label);
+          };
+
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'upload-thumb-remove';
+          remove.setAttribute('aria-label', 'Retirer la photo ' + file.name);
+          remove.textContent = '×';
+          remove.addEventListener('click', e => {
+            e.preventDefault();
+            e.stopPropagation();
+            photos.splice(index, 1);
+            showPhotoMessage('');
+            renderPreview();
+          });
+
+          thumb.append(img, remove);
+          photoPreview.appendChild(thumb);
+        });
+      }
+
+      function addPhotos(fileList) {
+        const refused = [];
+        Array.from(fileList).forEach(file => {
+          const isImage = file.type.startsWith('image/') || /\.(heic|heif)$/i.test(file.name);
+          if (!isImage)                { refused.push(file.name + ' (format non accepté)'); return; }
+          if (file.size > MAX_SIZE)    { refused.push(file.name + ' (plus de 10 Mo)'); return; }
+          if (photos.some(p => p.name === file.name && p.size === file.size)) return; // doublon
+          if (photos.length >= MAX_PHOTOS) { refused.push(file.name + ' (maximum 10 photos)'); return; }
+          photos.push(file);
+        });
+        showPhotoMessage(refused.length ? 'Photo(s) non ajoutée(s) : ' + refused.join(', ') + '.' : '');
+        renderPreview();
+      }
+
+      if (photoInput) {
+        photoInput.addEventListener('change', () => {
+          addPhotos(photoInput.files);
+          photoInput.value = '';              // permet de rajouter d'autres photos ensuite
+        });
+        ['dragenter', 'dragover'].forEach(evt =>
+          uploadZone.addEventListener(evt, () => uploadZone.classList.add('drag-over')));
+        ['dragleave', 'drop'].forEach(evt =>
+          uploadZone.addEventListener(evt, () => uploadZone.classList.remove('drag-over')));
+      }
+
+      /* ── Envoi ── */
+      function buildData(withPhotos) {
+        const data = new FormData(form);
+        data.delete('photos');
+        if (withPhotos) {
+          photos.forEach(file => data.append('photos', file, file.name));
+        } else if (photos.length) {
+          data.append('photos_non_transmises', photos.length + ' photo(s) sélectionnée(s) mais non transmise(s) — les demander au client par courriel.');
+        }
+        return data;
+      }
+
+      function send(data) {
+        return fetch(form.action, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } });
+      }
+
+      function showFormError(message) {
+        errorBox.textContent = message;
+        errorBox.hidden = false;
+      }
+
+      form.addEventListener('submit', async e => {
+        e.preventDefault();
+        errorBox.hidden = true;
+
+        let firstInvalid = null;
+        fields.forEach(field => { if (!validateField(field) && !firstInvalid) firstInvalid = field; });
+        if (firstInvalid) {
+          showFormError('Certains champs sont à compléter. Veuillez vérifier les messages en rouge.');
+          firstInvalid.focus({ preventScroll: true });
+          firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
+        const label = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Envoi en cours…';
+
+        try {
+          let response = await send(buildData(true));
+          // Si l'envoi avec photos est refusé (ex. : forfait sans pièces jointes), on renvoie sans photos
+          if (!response.ok && photos.length) {
+            response = await send(buildData(false));
+          }
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+
+          form.style.display = 'none';
+          success.classList.add('visible');
+          window.scrollTo({ top: document.getElementById('soumission').offsetTop - 100, behavior: 'smooth' });
+        } catch (err) {
+          console.warn('[Atelier Reviva] Échec de l\'envoi du formulaire —', err.message);
+          showFormError('Votre demande n\'a pas pu être envoyée. Vérifiez votre connexion et réessayez, ou appelez-nous au (514) 430-6221.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = label;
+        }
+      });
+    })();
   </script>
 </body>
 </html>

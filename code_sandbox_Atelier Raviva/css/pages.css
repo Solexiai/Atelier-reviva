@@ -206,6 +206,78 @@
   border: 1px solid var(--sand);
 }
 
+/* Vignette photo avec bouton de retrait (au-dessus de la zone cliquable) */
+.upload-thumb {
+  position: relative;
+  z-index: 2;
+}
+
+.upload-thumb-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  padding: 0.3rem;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  word-break: break-all;
+  background: var(--white);
+  border: 1px solid var(--sand);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.upload-thumb-remove {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: var(--terra-dark);
+  color: var(--white);
+  font-size: 0.9rem;
+  line-height: 22px;
+  cursor: pointer;
+}
+
+/* Validation */
+.form-input.is-invalid,
+.form-select.is-invalid,
+.form-textarea.is-invalid {
+  border-color: var(--terra-dark);
+}
+
+.form-error {
+  margin-top: 0.4rem;
+  font-size: 0.76rem;
+  color: var(--terra-dark);
+}
+
+.form-check:has(.form-error) {
+  flex-wrap: wrap;
+}
+
+.form-check .form-error {
+  flex-basis: 100%;
+  margin-top: 0;
+}
+
+.form-alert {
+  margin-bottom: 1.2rem;
+  font-size: 0.84rem;
+  color: var(--terra-dark);
+}
+
+.form-alert[hidden] { display: none; }
+
+button[type="submit"]:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
 /* Checkbox / Radio */
 .form-check {
   display: flex;
