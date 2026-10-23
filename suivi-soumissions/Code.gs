@@ -31,6 +31,7 @@ const CONFIG = {
   HEURE_RESUME: 8,                         // heure du courriel de relances (0-23)
   ONGLET_SUIVI: 'Suivi des soumissions',
   ONGLET_MODELES: 'Modèles de relance',
+  ONGLET_BORD: 'Tableau de bord',
   DOSSIER_PHOTOS: 'Atelier Reviva — Photos des soumissions',
   ENVOYER_ACCUSE_CLIENT: true,             // false = pas de courriel automatique au client
   MAX_PHOTOS: 10,
@@ -139,6 +140,9 @@ function installer() {
 
   /* Onglet des modèles de courriels */
   creerModeles_(ss);
+
+  /* Onglet tableau de bord (recréé à chaque installation : il ne contient que des calculs) */
+  creerTableauDeBord_(ss, sheet);
 
   /* Dossier Drive des photos */
   if (!props.getProperty('DOSSIER_ID') || !dossierExiste_(props.getProperty('DOSSIER_ID'))) {
@@ -470,6 +474,130 @@ function mettreEnForme_(sheet) {
   sheet.setConditionalFormatRules(regles);
 
   if (!sheet.getFilter()) sheet.getRange(1, 1, maxLignes, nbCol).createFilter();
+}
+
+/* Statuts qui veulent dire « le client a dit oui » (le projet peut avoir avancé depuis) */
+const STATUTS_ACCEPTES = ['Acceptée', 'En atelier', 'Terminé', 'Avis demandé'];
+
+function creerTableauDeBord_(ss, suivi) {
+  const col = indexColonnes_(suivi);
+  const requis = ['Reçue le', 'Statut', 'Prochaine relance', 'Montant soumis ($)', 'Soumission envoyée le', 'Type de meuble', 'Service'];
+  if (requis.some(t => col[t] === undefined)) return;
+
+  /* Recréer l'onglet à neuf */
+  let bord = ss.getSheetByName(CONFIG.ONGLET_BORD);
+  if (bord) {
+    bord.getCharts().forEach(c => bord.removeChart(c));
+    bord.clear();
+    bord.clearConditionalFormatRules();
+  } else {
+    bord = ss.insertSheet(CONFIG.ONGLET_BORD, 1);
+  }
+
+  /* Plages de l'onglet de suivi, ex. 'Suivi des soumissions'!$B$2:$B */
+  const nomSuivi = "'" + CONFIG.ONGLET_SUIVI.replace(/'/g, "''") + "'!";
+  const L = titre => columnToLetter_(col[titre] + 1);
+  const P = titre => nomSuivi + '$' + L(titre) + '$2:$' + L(titre);
+  const RECUE = P('Reçue le'), STATUT = P('Statut'), RELANCE = P('Prochaine relance'),
+        MONTANT = P('Montant soumis ($)'), ENVOYEE = P('Soumission envoyée le');
+  const DEBUT_MOIS = 'DATE(YEAR(TODAY()),MONTH(TODAY()),1)';
+
+  // Somme sur les statuts « acceptés » (évite les tableaux {…} qui changent selon la langue du Sheets)
+  const sommeAcceptes = modele => '(' + STATUTS_ACCEPTES.map(s => modele.replace('§', '"' + s + '"')).join('+') + ')';
+  const nbAcceptes        = sommeAcceptes('COUNTIF(' + STATUT + ',§)');
+  const nbAcceptesMois    = sommeAcceptes('COUNTIFS(' + STATUT + ',§,' + RECUE + ',">="&' + DEBUT_MOIS + ')');
+  const montantAcceptes   = sommeAcceptes('SUMIF(' + STATUT + ',§,' + MONTANT + ')');
+  const montantAccMois    = sommeAcceptes('SUMIFS(' + MONTANT + ',' + STATUT + ',§,' + RECUE + ',">="&' + DEBUT_MOIS + ')');
+  const nbDemandes        = 'COUNTA(' + nomSuivi + '$A$2:$A)';
+  const nbEnvoyees        = '(COUNTA(' + STATUT + ')-COUNTIF(' + STATUT + ',"Nouvelle demande"))';
+
+  const or = '#B89A6A', terra = '#A3624A', brun = '#6B4F3F', creme = '#F5F1EB';
+
+  /* Titre */
+  bord.getRange('A1').setValue('Tableau de bord — ' + CONFIG.NOM_ATELIER)
+    .setFontSize(18).setFontColor(terra).setFontFamily('Georgia');
+  bord.getRange('A2').setValue('Se met à jour tout seul. Pensez à inscrire le « Montant soumis ($) » de chaque soumission pour des chiffres justes.')
+    .setFontColor('#9C8578').setFontStyle('italic');
+
+  /* Blocs d'indicateurs : [titre de section, [[libellé, formule, format], …]] */
+  const blocs = [
+    ['CE MOIS-CI', [
+      ['Demandes reçues',              '=COUNTIFS(' + RECUE + ',">="&' + DEBUT_MOIS + ')', '0'],
+      ['Soumissions envoyées',         '=COUNTIFS(' + ENVOYEE + ',">="&' + DEBUT_MOIS + ')', '0'],
+      ['Acceptées (demandes du mois)', '=' + nbAcceptesMois, '0'],
+      ['Montant accepté',              '=' + montantAccMois, '#,##0 $'],
+    ]],
+    ['EN CE MOMENT', [
+      ['À relancer aujourd\'hui',      '=COUNTIFS(' + RELANCE + ',"<="&TODAY(),' + RELANCE + ',"<>")', '0'],
+      ['Demandes sans réponse',        '=COUNTIF(' + STATUT + ',"Nouvelle demande")', '0'],
+      ['Soumissions en attente',       '=COUNTIF(' + STATUT + ',"Soumission envoyée")+COUNTIF(' + STATUT + ',"Relancé")', '0'],
+      ['Meubles en atelier',           '=COUNTIF(' + STATUT + ',"Acceptée")+COUNTIF(' + STATUT + ',"En atelier")', '0'],
+    ]],
+    ['DEPUIS LE DÉBUT', [
+      ['Demandes reçues',              '=' + nbDemandes, '0'],
+      ['Soumissions envoyées',         '=' + nbEnvoyees, '0'],
+      ['Acceptées',                    '=' + nbAcceptes, '0'],
+      ['Refusées',                     '=COUNTIF(' + STATUT + ',"Refusée")', '0'],
+      ['Taux d\'acceptation',          '=IFERROR(' + nbAcceptes + '/' + nbEnvoyees + ',0)', '0%'],
+      ['Montant total soumis',         '=SUM(' + MONTANT + ')', '#,##0 $'],
+      ['Montant total accepté',        '=' + montantAcceptes, '#,##0 $'],
+      ['Délai moyen avant soumission', '=IFERROR(ROUND(AVERAGE(FILTER(' + ENVOYEE + '-INT(' + RECUE + '),ISNUMBER(' + ENVOYEE + '),ISNUMBER(' + RECUE + '))),1)&" jours","—")', '@'],
+    ]],
+  ];
+
+  let ligne = 4;
+  blocs.forEach(([titre, items]) => {
+    bord.getRange(ligne, 1).setValue(titre).setFontWeight('bold').setFontColor(or).setFontSize(9);
+    ligne++;
+    items.forEach(([libelle, formule, format]) => {
+      bord.getRange(ligne, 1).setValue(libelle).setFontColor(brun);
+      bord.getRange(ligne, 2).setFormula(formule).setNumberFormat(format)
+        .setFontWeight('bold').setFontSize(12).setHorizontalAlignment('right');
+      ligne++;
+    });
+    ligne++;
+  });
+
+  /* Meubles et services les plus demandés */
+  const top = (colonne, depart, titre, entete) => {
+    const c = L(colonne);
+    bord.getRange(depart).setValue(titre).setFontWeight('bold').setFontColor(or).setFontSize(9);
+    const cellule = bord.getRange(depart).offset(1, 0);
+    cellule.setFormula('=IFERROR(QUERY(' + nomSuivi + '$' + c + '$2:$' + c + ',"select ' + c + ', count(' + c + ') where ' + c +
+      " <> '' group by " + c + ' order by count(' + c + ') desc limit 6 label ' + c + " '" + entete + "', count(" + c + ") 'Demandes'\",0),\"Aucune demande pour l'instant\")");
+    cellule.offset(0, 0, 1, 2).setFontWeight('bold').setBackground(creme).setFontColor(brun);
+  };
+  top('Type de meuble', 'D4', 'MEUBLES LES PLUS DEMANDÉS', 'Meuble');
+  top('Service', 'G4', 'SERVICES LES PLUS DEMANDÉS', 'Service');
+
+  /* Demandes par mois (12 derniers mois) + graphique */
+  bord.getRange('D14').setValue('DEMANDES PAR MOIS').setFontWeight('bold').setFontColor(or).setFontSize(9);
+  bord.getRange('D15:F15').setValues([['Mois', 'Demandes', 'Acceptées']])
+    .setFontWeight('bold').setBackground(creme).setFontColor(brun);
+  for (let k = 0; k < 12; k++) {
+    const r = 16 + k;
+    const debut = 'DATE(YEAR(TODAY()),MONTH(TODAY())-' + (11 - k) + ',1)';
+    bord.getRange(r, 4).setFormula('=' + debut).setNumberFormat('mmm yyyy');
+    bord.getRange(r, 5).setFormula('=COUNTIFS(' + RECUE + ',">="&D' + r + ',' + RECUE + ',"<"&EDATE(D' + r + ',1))');
+    bord.getRange(r, 6).setFormula('=' + sommeAcceptes('COUNTIFS(' + STATUT + ',§,' + RECUE + ',">="&D' + r + ',' + RECUE + ',"<"&EDATE(D' + r + ',1))'));
+  }
+
+  const graphique = bord.newChart()
+    .setChartType(Charts.ChartType.COLUMN)
+    .addRange(bord.getRange('D15:F27'))
+    .setNumHeaders(1)
+    .setPosition(14, 8, 0, 0)
+    .setOption('title', 'Demandes par mois')
+    .setOption('legend.position', 'bottom')
+    .setOption('colors', [or, terra])
+    .setOption('width', 520).setOption('height', 300)
+    .build();
+  bord.insertChart(graphique);
+
+  bord.setColumnWidth(1, 230); bord.setColumnWidth(2, 120); bord.setColumnWidth(3, 30);
+  bord.setColumnWidth(4, 190); bord.setColumnWidth(5, 90); bord.setColumnWidth(6, 90);
+  bord.setColumnWidth(7, 190); bord.setColumnWidth(8, 90);
+  bord.setHiddenGridlines(true);
 }
 
 function creerModeles_(ss) {

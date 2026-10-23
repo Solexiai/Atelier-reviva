@@ -28,7 +28,7 @@ Tout se passe dans le compte Google de l'atelier. C'est gratuit, et aucun compte
    - cliquez sur **Autoriser**.
 4. Relancez **Atelier Reviva → Installer / réparer le suivi** une deuxième fois. Le message « Suivi installé » s'affiche en bas à droite.
 
-Vous avez maintenant deux onglets, **Suivi des soumissions** et **Modèles de relance**. Un dossier Drive **Atelier Reviva — Photos des soumissions** a aussi été créé.
+Vous avez maintenant trois onglets : **Suivi des soumissions**, **Tableau de bord** et **Modèles de relance**. Un dossier Drive **Atelier Reviva — Photos des soumissions** a aussi été créé.
 
 ### 4. Mettre le programme en ligne
 1. Revenez dans l'éditeur Apps Script.
@@ -107,6 +107,18 @@ L'onglet **Modèles de relance** contient des textes prêts à copier :
 - demande d'avis.
 
 Remplacez les [crochets], puis personnalisez les textes à votre goût. Le programme ne les écrase jamais.
+
+### Le tableau de bord
+L'onglet **Tableau de bord** se calcule tout seul à partir du suivi, sans rien à remplir. Il présente :
+- **Ce mois-ci** : demandes reçues, soumissions envoyées, acceptées et montant accepté.
+- **En ce moment** : clients à relancer, demandes sans réponse, soumissions en attente et meubles en atelier.
+- **Depuis le début** : taux d'acceptation, montants soumis et acceptés, délai moyen avant d'envoyer une soumission.
+- **Les meubles et les services les plus demandés.**
+- **Un graphique des demandes par mois** sur les 12 derniers mois.
+
+Pour que les montants soient justes, inscrivez le **Montant soumis ($)** de chaque soumission. Les projets passés à « En atelier », « Terminé » ou « Avis demandé » comptent comme acceptés.
+
+Ne modifiez pas cet onglet à la main. Il est recréé à neuf à chaque **Installer / réparer le suivi**.
 
 ### Sur cellulaire
 L'appli **Google Sheets** permet de changer un statut en deux touches, et l'appli **Google Drive** de voir les photos.
