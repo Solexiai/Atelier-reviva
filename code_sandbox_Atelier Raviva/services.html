@@ -445,8 +445,14 @@
       const photoPreview = document.getElementById('photoPreview');
       const uploadZone   = document.getElementById('uploadZone');
 
+      /* ── RÉGLAGE : adresse du suivi Google (Apps Script) ──
+         Coller ici l'adresse « /exec » obtenue au déploiement (voir suivi-soumissions/INSTALLATION.md).
+         Tant qu'elle est vide, les demandes partent vers Formspree (sans les photos). */
+      const SUIVI_URL = '';
+
       const MAX_PHOTOS = 10;
       const MAX_SIZE   = 10 * 1024 * 1024; // 10 Mo
+      const PHOTO_MAX_PX = 1600;           // côté le plus long après réduction
       let photos = [];                     // photos retenues
 
       /* ── Messages d'erreur sous les champs ── */
@@ -577,7 +583,54 @@
           uploadZone.addEventListener(evt, () => uploadZone.classList.remove('drag-over')));
       }
 
-      /* ── Envoi ── */
+      /* ── Envoi vers le suivi Google : photos réduites puis encodées ── */
+      function lireEnBase64(blob) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(blob);
+        });
+      }
+
+      async function reduirePhoto(file) {
+        try {
+          const bitmap = await createImageBitmap(file);
+          const ratio = Math.min(1, PHOTO_MAX_PX / Math.max(bitmap.width, bitmap.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(bitmap.width * ratio);
+          canvas.height = Math.round(bitmap.height * ratio);
+          canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+          if (bitmap.close) bitmap.close();
+          const blob = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.82));
+          if (!blob) throw new Error('conversion impossible');
+          return { nom: file.name.replace(/\.[^.]+$/, '') + '.jpg', type: 'image/jpeg', data: await lireEnBase64(blob) };
+        } catch (err) {
+          // Format non lisible par le navigateur (ex. HEIC dans Chrome) : envoi de l'original
+          return { nom: file.name, type: file.type || 'application/octet-stream', data: await lireEnBase64(file) };
+        }
+      }
+
+      async function envoyerAuSuivi() {
+        const champs = {};
+        new FormData(form).forEach((valeur, cle) => {
+          if (cle !== 'photos' && cle.charAt(0) !== '_') champs[cle] = String(valeur);
+        });
+        const photosEnvoyees = [];
+        for (const file of photos) photosEnvoyees.push(await reduirePhoto(file));
+
+        // text/plain évite la requête préalable CORS, que Google ne gère pas
+        const response = await fetch(SUIVI_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ champs: champs, photos: photosEnvoyees, _gotcha: form.elements._gotcha.value })
+        });
+        const resultat = await response.json().catch(() => ({}));
+        if (!response.ok || !resultat.ok) throw new Error(resultat.erreur || ('HTTP ' + response.status));
+        return resultat;
+      }
+
+      /* ── Envoi de secours vers Formspree (sans photos si refusées) ── */
       function buildData(withPhotos) {
         const data = new FormData(form);
         data.delete('photos');
@@ -616,12 +669,16 @@
         submitBtn.textContent = 'Envoi en cours…';
 
         try {
-          let response = await send(buildData(true));
-          // Si l'envoi avec photos est refusé (ex. : forfait sans pièces jointes), on renvoie sans photos
-          if (!response.ok && photos.length) {
-            response = await send(buildData(false));
+          if (SUIVI_URL) {
+            await envoyerAuSuivi();
+          } else {
+            let response = await send(buildData(true));
+            // Si l'envoi avec photos est refusé (ex. : forfait sans pièces jointes), on renvoie sans photos
+            if (!response.ok && photos.length) {
+              response = await send(buildData(false));
+            }
+            if (!response.ok) throw new Error('HTTP ' + response.status);
           }
-          if (!response.ok) throw new Error('HTTP ' + response.status);
 
           form.style.display = 'none';
           success.classList.add('visible');
