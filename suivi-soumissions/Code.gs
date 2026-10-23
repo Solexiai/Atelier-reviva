@@ -113,6 +113,7 @@ function onOpen() {
 function installer() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   ss.setSpreadsheetTimeZone(CONFIG.FUSEAU);
+  detecterSeparateur_(ss);
 
   const props = PropertiesService.getScriptProperties();
   props.setProperty('SPREADSHEET_ID', ss.getId());
@@ -470,7 +471,7 @@ function mettreEnForme_(sheet) {
     ['=OR(' + S + '="Terminé",' + S + '="Avis demandé")', '#EEF0F4'],        // terminé → gris bleuté
     ['=' + S + '="Refusée"', '#EEEEEE'],                                     // refusée → gris
   ].map(([formule, couleur]) =>
-    SpreadsheetApp.newConditionalFormatRule().whenFormulaSatisfied(formule).setBackground(couleur).setRanges([plage]).build());
+    SpreadsheetApp.newConditionalFormatRule().whenFormulaSatisfied(formule_(formule)).setBackground(couleur).setRanges([plage]).build());
   sheet.setConditionalFormatRules(regles);
 
   if (!sheet.getFilter()) sheet.getRange(1, 1, maxLignes, nbCol).createFilter();
@@ -551,7 +552,7 @@ function creerTableauDeBord_(ss, suivi) {
     ligne++;
     items.forEach(([libelle, formule, format]) => {
       bord.getRange(ligne, 1).setValue(libelle).setFontColor(brun);
-      bord.getRange(ligne, 2).setFormula(formule).setNumberFormat(format)
+      bord.getRange(ligne, 2).setFormula(formule_(formule)).setNumberFormat(format)
         .setFontWeight('bold').setFontSize(12).setHorizontalAlignment('right');
       ligne++;
     });
@@ -563,8 +564,8 @@ function creerTableauDeBord_(ss, suivi) {
     const c = L(colonne);
     bord.getRange(depart).setValue(titre).setFontWeight('bold').setFontColor(or).setFontSize(9);
     const cellule = bord.getRange(depart).offset(1, 0);
-    cellule.setFormula('=IFERROR(QUERY(' + nomSuivi + '$' + c + '$2:$' + c + ',"select ' + c + ', count(' + c + ') where ' + c +
-      " <> '' group by " + c + ' order by count(' + c + ') desc limit 6 label ' + c + " '" + entete + "', count(" + c + ") 'Demandes'\",0),\"Aucune demande pour l'instant\")");
+    cellule.setFormula(formule_('=IFERROR(QUERY(' + nomSuivi + '$' + c + '$2:$' + c + ',"select ' + c + ', count(' + c + ') where ' + c +
+      " <> '' group by " + c + ' order by count(' + c + ') desc limit 6 label ' + c + " '" + entete + "', count(" + c + ") 'Demandes'\",0),\"Aucune demande pour l'instant\")"));
     cellule.offset(0, 0, 1, 2).setFontWeight('bold').setBackground(creme).setFontColor(brun);
   };
   top('Type de meuble', 'D4', 'MEUBLES LES PLUS DEMANDÉS', 'Meuble');
@@ -577,9 +578,9 @@ function creerTableauDeBord_(ss, suivi) {
   for (let k = 0; k < 12; k++) {
     const r = 16 + k;
     const debut = 'DATE(YEAR(TODAY()),MONTH(TODAY())-' + (11 - k) + ',1)';
-    bord.getRange(r, 4).setFormula('=' + debut).setNumberFormat('mmm yyyy');
-    bord.getRange(r, 5).setFormula('=COUNTIFS(' + RECUE + ',">="&D' + r + ',' + RECUE + ',"<"&EDATE(D' + r + ',1))');
-    bord.getRange(r, 6).setFormula('=' + sommeAcceptes('COUNTIFS(' + STATUT + ',§,' + RECUE + ',">="&D' + r + ',' + RECUE + ',"<"&EDATE(D' + r + ',1))'));
+    bord.getRange(r, 4).setFormula(formule_('=' + debut)).setNumberFormat('mmm yyyy');
+    bord.getRange(r, 5).setFormula(formule_('=COUNTIFS(' + RECUE + ',">="&D' + r + ',' + RECUE + ',"<"&EDATE(D' + r + ',1))'));
+    bord.getRange(r, 6).setFormula(formule_('=' + sommeAcceptes('COUNTIFS(' + STATUT + ',§,' + RECUE + ',">="&D' + r + ',' + RECUE + ',"<"&EDATE(D' + r + ',1))')));
   }
 
   const graphique = bord.newChart()
@@ -675,6 +676,40 @@ function formaterDate_(date) {
 
 function dossierExiste_(id) {
   try { DriveApp.getFolderById(id).getName(); return true; } catch (e) { return false; }
+}
+
+/* ── Séparateur des formules ──
+   Un Sheets réglé en français (Canada) attend « ; » entre les arguments, en anglais « , ».
+   On teste le Sheets une fois, puis formule_() adapte chaque formule écrite par le programme. */
+let SEPARATEUR_FORMULE = ',';
+
+function detecterSeparateur_(ss) {
+  const ancien = ss.getSheetByName('_essai_formule_');
+  if (ancien) ss.deleteSheet(ancien);
+  const essai = ss.insertSheet('_essai_formule_');
+  try {
+    const cellule = essai.getRange(1, 1);
+    cellule.setFormula('=SUM(1,2)');          // en français, « 1,2 » se lit 1,2 et non 1 puis 2
+    SpreadsheetApp.flush();
+    SEPARATEUR_FORMULE = cellule.getValue() === 3 ? ',' : ';';
+  } catch (e) {
+    SEPARATEUR_FORMULE = ';';
+  } finally {
+    ss.deleteSheet(essai);
+  }
+}
+
+/* Remplace les virgules séparant les arguments, sans toucher au texte entre guillemets
+   ni aux noms d'onglets entre apostrophes */
+function formule_(f) {
+  if (SEPARATEUR_FORMULE === ',') return f;
+  let sortie = '', guillemets = false, apostrophes = false;
+  for (const ch of f) {
+    if (ch === '"' && !apostrophes) guillemets = !guillemets;
+    else if (ch === "'" && !guillemets) apostrophes = !apostrophes;
+    sortie += (ch === ',' && !guillemets && !apostrophes) ? SEPARATEUR_FORMULE : ch;
+  }
+  return sortie;
 }
 
 function columnToLetter_(n) {
