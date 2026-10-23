@@ -454,7 +454,8 @@ function mettreEnForme_(sheet) {
   ['Prochaine relance', 'Dernier contact', 'Soumission envoyée le'].forEach(n => {
     if (col[n] === undefined) return;
     corps(n).setNumberFormat('yyyy-mm-dd').setDataValidation(
-      SpreadsheetApp.newDataValidation().requireDate().setAllowInvalid(true).build());
+      SpreadsheetApp.newDataValidation().requireDate().setAllowInvalid(false)
+        .setHelpText('Entrez une date, par exemple 2027-01-15. Cette case se remplit aussi toute seule quand on change le Statut.').build());
   });
   if (col['Montant soumis ($)'] !== undefined) corps('Montant soumis ($)').setNumberFormat('#,##0.00 $');
   ['Description', 'Commentaires', 'Notes'].forEach(n => col[n] !== undefined && sheet.setColumnWidth(col[n] + 1, 280));
@@ -542,7 +543,7 @@ function creerTableauDeBord_(ss, suivi) {
       ['Taux d\'acceptation',          '=IFERROR(' + nbAcceptes + '/' + nbEnvoyees + ',0)', '0%'],
       ['Montant total soumis',         '=SUM(' + MONTANT + ')', '#,##0 $'],
       ['Montant total accepté',        '=' + montantAcceptes, '#,##0 $'],
-      ['Délai moyen avant soumission', '=IFERROR(ROUND(AVERAGE(FILTER(' + ENVOYEE + '-INT(' + RECUE + '),ISNUMBER(' + ENVOYEE + '),ISNUMBER(' + RECUE + '))),1)&" jours","—")', '@'],
+      ['Délai moyen avant soumission', '=IFERROR(ROUND(AVERAGE(FILTER(' + ENVOYEE + '-INT(' + RECUE + '),ISNUMBER(' + ENVOYEE + '),ISNUMBER(' + RECUE + '),' + ENVOYEE + '>=INT(' + RECUE + '))),1)&" jours","—")', '@'],
     ]],
   ];
 
@@ -571,13 +572,24 @@ function creerTableauDeBord_(ss, suivi) {
   top('Type de meuble', 'D4', 'MEUBLES LES PLUS DEMANDÉS', 'Meuble');
   top('Service', 'G4', 'SERVICES LES PLUS DEMANDÉS', 'Service');
 
-  /* Demandes par mois (12 derniers mois) + graphique */
+  /* Demandes par mois + graphique.
+     Période choisie dans la case F14 : « 12 derniers mois » (avance tout seul chaque mois)
+     ou une année précise (janvier à décembre). */
+  const GLISSANT = '12 derniers mois';
+  const anneeDepart = 2026;
+  const annees = [GLISSANT];
+  for (let a = anneeDepart; a <= Math.max(new Date().getFullYear() + 10, anneeDepart + 10); a++) annees.push(String(a));
+
   bord.getRange('D14').setValue('DEMANDES PAR MOIS').setFontWeight('bold').setFontColor(or).setFontSize(9);
+  bord.getRange('E14').setValue('Période :').setFontColor(brun).setHorizontalAlignment('right');
+  bord.getRange('F14').setValue(GLISSANT)
+    .setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(annees, true).setAllowInvalid(false).build())
+    .setFontWeight('bold').setFontColor(terra).setBackground('#FFF6E0');
   bord.getRange('D15:F15').setValues([['Mois', 'Demandes', 'Acceptées']])
     .setFontWeight('bold').setBackground(creme).setFontColor(brun);
   for (let k = 0; k < 12; k++) {
     const r = 16 + k;
-    const debut = 'DATE(YEAR(TODAY()),MONTH(TODAY())-' + (11 - k) + ',1)';
+    const debut = 'IF($F$14="' + GLISSANT + '",DATE(YEAR(TODAY()),MONTH(TODAY())-' + (11 - k) + ',1),DATE(VALUE($F$14),' + (k + 1) + ',1))';
     bord.getRange(r, 4).setFormula(formule_('=' + debut)).setNumberFormat('mmm yyyy');
     bord.getRange(r, 5).setFormula(formule_('=COUNTIFS(' + RECUE + ',">="&D' + r + ',' + RECUE + ',"<"&EDATE(D' + r + ',1))'));
     bord.getRange(r, 6).setFormula(formule_('=' + sommeAcceptes('COUNTIFS(' + STATUT + ',§,' + RECUE + ',">="&D' + r + ',' + RECUE + ',"<"&EDATE(D' + r + ',1))')));
@@ -596,7 +608,7 @@ function creerTableauDeBord_(ss, suivi) {
   bord.insertChart(graphique);
 
   bord.setColumnWidth(1, 230); bord.setColumnWidth(2, 120); bord.setColumnWidth(3, 30);
-  bord.setColumnWidth(4, 190); bord.setColumnWidth(5, 90); bord.setColumnWidth(6, 90);
+  bord.setColumnWidth(4, 190); bord.setColumnWidth(5, 90); bord.setColumnWidth(6, 130);
   bord.setColumnWidth(7, 190); bord.setColumnWidth(8, 90);
   bord.setHiddenGridlines(true);
 }

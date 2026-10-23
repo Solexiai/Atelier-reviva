@@ -114,7 +114,9 @@ L'onglet **Tableau de bord** se calcule tout seul à partir du suivi, sans rien 
 - **En ce moment** : clients à relancer, demandes sans réponse, soumissions en attente et meubles en atelier.
 - **Depuis le début** : taux d'acceptation, montants soumis et acceptés, délai moyen avant d'envoyer une soumission.
 - **Les meubles et les services les plus demandés.**
-- **Un graphique des demandes par mois** sur les 12 derniers mois.
+- **Les demandes par mois**, en tableau et en graphique. La case **Période** (fond crème, au-dessus du tableau) permet de choisir :
+  - **12 derniers mois** (par défaut) : la période avance toute seule chaque mois, sans rien toucher ;
+  - **une année précise** (2026, 2027, 2028…) : le tableau et le graphique affichent alors janvier à décembre de cette année-là.
 
 Pour que les montants soient justes, inscrivez le **Montant soumis ($)** de chaque soumission. Les projets passés à « En atelier », « Terminé » ou « Avis demandé » comptent comme acceptés.
 
