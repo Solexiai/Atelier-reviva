@@ -84,7 +84,7 @@ Chaque ligne est une demande. La seule chose à faire est de **changer le Statut
 | Avis demandé | Dossier clos |
 | Refusée | Dossier clos |
 
-Pensez aussi à remplir le **Montant soumis ($)** et les **Notes**. La date **Prochaine relance** peut être modifiée à la main à tout moment, par exemple si le client a demandé qu'on le rappelle en janvier.
+Pensez aussi à remplir le **Montant soumis ($)** et les **Notes**. Changez le statut **dès que le client répond** : les relances automatiques se basent sur lui. La date **Prochaine relance** peut être modifiée à la main à tout moment, par exemple si le client a demandé qu'on le rappelle en janvier.
 
 **Couleurs automatiques :**
 - 🟧 orangé : relance due aujourd'hui ou en retard ;
@@ -94,19 +94,44 @@ Pensez aussi à remplir le **Montant soumis ($)** et les **Notes**. La date **Pr
 
 Les flèches de la première ligne permettent de **filtrer**, par exemple pour n'afficher que les « Soumission envoyée ».
 
-### Le courriel du matin (8 h)
-S'il y a des clients à relancer, vous recevez **« À relancer aujourd'hui »** avec la liste, la raison, le nombre de jours de retard et les coordonnées en un clic. S'il n'y a rien à faire, aucun courriel n'est envoyé.
+### Les relances automatiques (chaque matin à 8 h)
+Le programme écrit **lui-même** aux clients qui n'ont pas répondu, depuis l'adresse de l'atelier, avec les textes de l'onglet **Modèles de relance** :
 
-Pour l'envoyer à n'importe quel moment : **Atelier Reviva → Envoyer les relances du jour maintenant**.
+| Situation du client | Ce qui part tout seul | Ensuite |
+|---|---|---|
+| Soumission envoyée, sans nouvelles depuis 3 jours | **Relance 1** | Statut « Relancé », nouvelle relance dans 5 jours |
+| Relancé une fois, toujours sans nouvelles | **Relance 2** (dernier suivi) | Plus de courriel automatique. Rappel dans 7 jours pour fermer le dossier (« Refusée ») |
+| Meuble terminé depuis 7 jours | **Demande d'avis** | Statut « Avis demandé », dossier clos |
+
+Chaque envoi est noté dans la colonne **Notes** (« relance 1 envoyée (auto) »), et **Dernier contact** et **Nb relances** se mettent à jour. Les réponses des clients arrivent dans la boîte de l'atelier comme un courriel normal.
+
+**Rien n'est envoyé automatiquement pour une « Nouvelle demande »** : la soumission, c'est vous qui la préparez.
+
+**Pour qu'un client ne reçoive pas de courriel automatique** (par exemple si vous venez de lui parler au téléphone), choisissez **Non** dans sa colonne **Relance auto**. Une case vide ou « Oui » veut dire que les relances partent. Le client reste alors dans votre liste « À faire ».
+
+### Le courriel du matin (8 h)
+Vous recevez **« Suivi du jour »** avec deux parties :
+- **À faire aujourd'hui** : les soumissions à préparer, les dossiers à fermer et les clients en « Non ». Pour chacun, vous avez la raison, le retard et les coordonnées en un clic.
+- **Envoyé automatiquement ce matin** : la liste des relances parties toutes seules.
+
+S'il n'y a rien à faire ni rien d'envoyé, aucun courriel n'arrive.
+
+Pour lancer le tout à un autre moment : **Atelier Reviva → Lancer les relances du jour maintenant**. Attention, ce menu envoie aussi les relances automatiques qui sont dues.
 
 ### Modèles de relance
-L'onglet **Modèles de relance** contient des textes prêts à copier :
-- relance après 3 jours ;
-- dernier suivi ;
+L'onglet **Modèles de relance** contient les textes des courriels :
+- relance 1 ;
+- relance 2 ;
 - confirmation d'une soumission acceptée ;
 - demande d'avis.
 
-Remplacez les [crochets], puis personnalisez les textes à votre goût. Le programme ne les écrase jamais.
+La relance 1, la relance 2 et la demande d'avis servent **tels quels** aux relances automatiques. Les mots entre crochets se remplissent tout seuls :
+- `[Prénom]` : le prénom du client ;
+- `[meuble]` : son meuble, par exemple « commode » ;
+- `[date]` : la date de la soumission, par exemple « 21 octobre » ;
+- `[lien avis]` : le lien Google pour laisser un avis, s'il est réglé.
+
+Vous pouvez réécrire les textes à votre goût, le programme ne les écrase jamais. **N'ajoutez pas d'autres [crochets]** dans ces trois modèles. Si le programme en trouve un qu'il ne sait pas remplir, il n'envoie rien et vous prévient dans le courriel du matin. Le modèle « confirmation » est seulement à copier à la main.
 
 ### Le tableau de bord
 L'onglet **Tableau de bord** se calcule tout seul à partir du suivi, sans rien à remplir. Il présente :
@@ -132,7 +157,9 @@ L'appli **Google Sheets** permet de changer un statut en deux touches, et l'appl
 En haut de `Code.gs`, le bloc `CONFIG` permet de changer :
 - la signature et le téléphone des courriels ;
 - l'heure du courriel du matin (`HEURE_RESUME`) ;
-- l'envoi ou non de l'accusé de réception au client (`ENVOYER_ACCUSE_CLIENT`).
+- l'envoi ou non de l'accusé de réception au client (`ENVOYER_ACCUSE_CLIENT`) ;
+- l'arrêt de toutes les relances automatiques (`RELANCES_AUTO: false`) ;
+- le lien pour laisser un avis Google (`LIEN_AVIS`), le jour où l'atelier aura une fiche Google. Il apparaît alors dans la demande d'avis.
 
 Le bloc `REGLES_STATUT` règle le nombre de jours avant chaque relance.
 
