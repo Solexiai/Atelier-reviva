@@ -10,7 +10,13 @@
  *    3. l'atelier reçoit un courriel d'alerte
  *    4. le client reçoit un accusé de réception
  *
- *  Chaque matin (8 h) : courriel « À relancer aujourd'hui ».
+ *  Chaque matin (8 h) : relances automatiques + courriel « Suivi du jour ».
+ *
+ *  BOUTIQUE (page « Meubles à vendre » du site) :
+ *    - onglet « Inventaire » : une ligne par meuble, un dossier Drive de photos par meuble
+ *    - le site lit l'inventaire tout seul (statut Disponible / Réservé / Vendu)
+ *    - bouton « Je le veux » → onglet « Réservations », meuble réservé, paiement Interac
+ *    - inscriptions « Être averti des nouveautés » → onglet « Abonnés nouveautés »
  *
  *  Quand on change le Statut d'une ligne, les dates de suivi
  *  se remplissent toutes seules (voir REGLES_STATUT plus bas).
@@ -37,6 +43,17 @@ const CONFIG = {
   MAX_PHOTOS: 10,
   RELANCES_AUTO: true,                     // false = plus aucune relance envoyée automatiquement aux clients
   LIEN_AVIS: '',                           // lien Google pour laisser un avis (ex. https://g.page/r/…/review) — vide = pas de lien
+
+  /* Boutique */
+  ONGLET_INVENTAIRE: 'Inventaire',
+  ONGLET_RESERVATIONS: 'Réservations',
+  ONGLET_ABONNES: 'Abonnés nouveautés',
+  DOSSIER_BOUTIQUE: 'Atelier Reviva — Photos boutique (publiques)',
+  DELAI_RESERVATION_JOURS: 2,              // jours pour payer avant que le meuble soit remis en vente
+  COURRIEL_INTERAC: '',                    // adresse pour les virements Interac — vide = courriel de l'atelier
+  LIEU_CUEILLETTE: '',                     // ex. « à l'atelier, à Longueuil » — vide = adresse donnée par courriel
+  JOURS_NOUVEAUTE: 30,                     // un meuble ajouté depuis moins de X jours porte l'étiquette « Nouveau »
+  MAX_VENDUS_AFFICHES: 6,                  // nombre de meubles vendus montrés sur le site (les plus récents)
 };
 
 /* Statuts proposés dans la liste déroulante, dans l'ordre du parcours client */
@@ -105,6 +122,8 @@ function onOpen() {
     .createMenu('Atelier Reviva')
     .addItem('Installer / réparer le suivi', 'installer')
     .addItem('Lancer les relances du jour maintenant', 'envoyerRelancesDuJour')
+    .addSeparator()
+    .addItem('Mettre à jour la boutique du site maintenant', 'mettreAJourBoutique')
     .addToUi();
 }
 
@@ -154,6 +173,9 @@ function installer() {
   /* Onglet tableau de bord (recréé à chaque installation : il ne contient que des calculs) */
   creerTableauDeBord_(ss, sheet);
 
+  /* Boutique : inventaire, réservations, abonnés, dossier de photos publiques */
+  installerBoutique_(ss, props);
+
   /* Dossier Drive des photos */
   if (!props.getProperty('DOSSIER_ID') || !dossierExiste_(props.getProperty('DOSSIER_ID'))) {
     const dossiers = DriveApp.getFoldersByName(CONFIG.DOSSIER_PHOTOS);
@@ -185,6 +207,10 @@ function doPost(e) {
 
     // Anti-pourriel : le champ caché doit rester vide
     if (payload._gotcha) return reponse_({ ok: true });
+
+    // Boutique
+    if (payload.type === 'reservation') return reponse_(traiterReservation_(payload));
+    if (payload.type === 'abonnement') return reponse_(traiterAbonnement_(payload));
 
     const manquants = CHAMPS_OBLIGATOIRES.filter(c => !String(champs[c] || '').trim());
     if (manquants.length) return reponse_({ ok: false, erreur: 'Champs manquants : ' + manquants.join(', ') });
@@ -261,7 +287,15 @@ function doPost(e) {
 }
 
 /* Petite page si quelqu'un ouvre l'adresse du programme dans un navigateur */
-function doGet() {
+function doGet(e) {
+  if (e && e.parameter && e.parameter.action === 'inventaire') {
+    try {
+      return reponse_(lireInventairePublic_());
+    } catch (err) {
+      console.error('Inventaire : ' + (err && err.stack || err));
+      return reponse_({ ok: false, erreur: 'Inventaire indisponible' });
+    }
+  }
   return ContentService.createTextOutput(CONFIG.NOM_ATELIER + ' — le suivi des soumissions est actif.');
 }
 
@@ -272,6 +306,8 @@ function doGet() {
 function quandOnModifie(e) {
   if (!e || !e.range) return;
   const sheet = e.range.getSheet();
+  if (sheet.getName() === CONFIG.ONGLET_INVENTAIRE) return quandInventaireModifie_(e);
+  if (sheet.getName() === CONFIG.ONGLET_RESERVATIONS) return quandReservationModifiee_(e);
   if (sheet.getName() !== CONFIG.ONGLET_SUIVI) return;
 
   const col = indexColonnes_(sheet);
@@ -316,10 +352,10 @@ function envoyerRelancesDuJour() {
   const props = PropertiesService.getScriptProperties();
   const ss = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID'));
   const sheet = ss.getSheetByName(CONFIG.ONGLET_SUIVI);
-  if (!sheet || sheet.getLastRow() < 2) return;
+  if (!sheet) return;
 
   const col = indexColonnes_(sheet);
-  const donnees = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn()).getValues();
+  const donnees = sheet.getLastRow() < 2 ? [] : sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn()).getValues();
   const aujourdHui = debutJournee_(new Date());
   const finJournee = new Date(aujourdHui);
   finJournee.setHours(23, 59, 59, 999);
@@ -390,6 +426,8 @@ function envoyerRelancesDuJour() {
       ('Suivi : ' + statut);
     aRelancer.push(fiche);
   });
+
+  reservationsAPayer_(ss, finJournee).forEach(r => aRelancer.push(r));
 
   if (!envoyees.length && !aRelancer.length) return;
   envoyerResume_(ss, sheet, props.getProperty('COURRIEL_ATELIER'), envoyees, aRelancer);
@@ -464,7 +502,7 @@ function dateEnFrancais_(date) {
 }
 
 function envoyerResume_(ss, sheet, destinataire, envoyees, aRelancer) {
-  const lien = r => ss.getUrl() + '#gid=' + sheet.getSheetId() + '&range=A' + r.ligne;
+  const lien = r => r.lien || (ss.getUrl() + '#gid=' + sheet.getSheetId() + '&range=A' + r.ligne);
   const cellule = 'padding:10px;border-bottom:1px solid #EDE7DA;';
   const ligneHtml = (r, colonneAction) =>
     '<tr>' +
@@ -802,6 +840,510 @@ function creerModeles_(ss) {
   sheet.getRange(1, 1, 1, 3).setFontWeight('bold').setBackground('#F5F1EB').setFontColor('#6B4F3F');
   sheet.setColumnWidth(1, 240); sheet.setColumnWidth(2, 260); sheet.setColumnWidth(3, 560);
   sheet.setFrozenRows(1);
+}
+
+
+/* ═══════════════════════════════════════════════
+   BOUTIQUE — inventaire, réservations, abonnés
+═══════════════════════════════════════════════ */
+const COLONNES_INVENTAIRE = [
+  'Code', 'Statut', 'Nom', 'Catégorie', 'Prix ($)', 'Dimensions', 'Matériau', 'Finition / style',
+  'Description', 'Dossier photos', 'Nb photos', 'Réservé par', 'Réservé le', 'Ajouté le',
+];
+const STATUTS_INVENTAIRE = ['Brouillon', 'Disponible', 'Réservé', 'Vendu'];
+const CATEGORIES_MEUBLES = ['Commode', 'Buffet', 'Table', 'Chevet', 'Chaise / fauteuil', 'Bibliothèque', 'Armoire', 'Mobilier d\'appoint', 'Autre'];
+
+const COLONNES_RESERVATIONS = [
+  'N°', 'Reçue le', 'Statut', 'Payer avant le', 'Code meuble', 'Meuble', 'Prix ($)',
+  'Prénom', 'Nom', 'Courriel', 'Téléphone', 'Remise', 'Message', 'Notes',
+];
+const STATUTS_RESERVATION = ['Nouvelle réservation', 'Paiement reçu', 'Remis au client', 'Annulée'];
+
+const COLONNES_ABONNES = ['Inscrit le', 'Prénom', 'Courriel', 'Intérêt', 'Source'];
+
+const CLE_CACHE_INVENTAIRE = 'inventaire_public_v1';
+const REGEX_COURRIEL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+
+/* ── Installation des onglets de la boutique ── */
+function installerBoutique_(ss, props) {
+  /* Onglet Inventaire */
+  const inv = preparerOnglet_(ss, CONFIG.ONGLET_INVENTAIRE, COLONNES_INVENTAIRE);
+  const ci = indexColonnes_(inv);
+  const lignes = Math.max(inv.getMaxRows(), 500) - 1;
+  const corpsInv = t => inv.getRange(2, ci[t] + 1, lignes, 1);
+  corpsInv('Statut').setDataValidation(SpreadsheetApp.newDataValidation()
+    .requireValueInList(STATUTS_INVENTAIRE, true).setAllowInvalid(false)
+    .setHelpText('Brouillon = pas encore sur le site. Disponible = en vente. Réservé et Vendu se mettent aussi à jour tout seuls.').build());
+  corpsInv('Catégorie').setDataValidation(SpreadsheetApp.newDataValidation()
+    .requireValueInList(CATEGORIES_MEUBLES, true).setAllowInvalid(false).build());
+  corpsInv('Prix ($)').setNumberFormat('#,##0 $');
+  corpsInv('Ajouté le').setNumberFormat('yyyy-mm-dd');
+  corpsInv('Réservé le').setNumberFormat('yyyy-mm-dd');
+  inv.setColumnWidth(ci['Nom'] + 1, 220);
+  inv.setColumnWidth(ci['Description'] + 1, 320);
+  inv.setColumnWidth(ci['Dossier photos'] + 1, 160);
+  const plageInv = inv.getRange(2, 1, lignes, inv.getLastColumn());
+  const S = '$' + columnToLetter_(ci['Statut'] + 1) + '2';
+  inv.setConditionalFormatRules([
+    ['=' + S + '="Disponible"', '#E3EFDD'],
+    ['=' + S + '="Réservé"', '#FFF6E0'],
+    ['=' + S + '="Vendu"', '#EEEEEE'],
+  ].map(([f, c]) => SpreadsheetApp.newConditionalFormatRule().whenFormulaSatisfied(formule_(f)).setBackground(c).setRanges([plageInv]).build()));
+  inv.getRange(1, ci['Nom'] + 1).setNote('Pour ajouter un meuble : écrivez son nom ici. Le code et le dossier photos apparaissent tout seuls. ' +
+    'Déposez les photos dans le dossier (nommez « avant » la photo d\'avant transformation), puis passez le Statut à Disponible.');
+
+  /* Onglet Réservations */
+  const res = preparerOnglet_(ss, CONFIG.ONGLET_RESERVATIONS, COLONNES_RESERVATIONS);
+  const cr = indexColonnes_(res);
+  const lignesRes = Math.max(res.getMaxRows(), 500) - 1;
+  res.getRange(2, cr['Statut'] + 1, lignesRes, 1).setDataValidation(SpreadsheetApp.newDataValidation()
+    .requireValueInList(STATUTS_RESERVATION, true).setAllowInvalid(false)
+    .setHelpText('Remis au client = le meuble passe Vendu. Annulée = le meuble est remis en vente.').build());
+  res.getRange(2, cr['Reçue le'] + 1, lignesRes, 1).setNumberFormat('yyyy-mm-dd hh:mm');
+  res.getRange(2, cr['Payer avant le'] + 1, lignesRes, 1).setNumberFormat('yyyy-mm-dd');
+  res.getRange(2, cr['Prix ($)'] + 1, lignesRes, 1).setNumberFormat('#,##0 $');
+  const plageRes = res.getRange(2, 1, lignesRes, res.getLastColumn());
+  const SR = '$' + columnToLetter_(cr['Statut'] + 1) + '2';
+  const PR = '$' + columnToLetter_(cr['Payer avant le'] + 1) + '2';
+  res.setConditionalFormatRules([
+    ['=AND(' + SR + '="Nouvelle réservation",' + PR + '<>"",' + PR + '<=TODAY())', '#F8DCD0'],
+    ['=' + SR + '="Nouvelle réservation"', '#FFF6E0'],
+    ['=' + SR + '="Paiement reçu"', '#E3EFDD'],
+    ['=OR(' + SR + '="Remis au client",' + SR + '="Annulée")', '#EEEEEE'],
+  ].map(([f, c]) => SpreadsheetApp.newConditionalFormatRule().whenFormulaSatisfied(formule_(f)).setBackground(c).setRanges([plageRes]).build()));
+
+  /* Onglet Abonnés */
+  const abo = preparerOnglet_(ss, CONFIG.ONGLET_ABONNES, COLONNES_ABONNES);
+  abo.getRange(2, 1, Math.max(abo.getMaxRows(), 500) - 1, 1).setNumberFormat('yyyy-mm-dd');
+
+  /* Dossier Drive des photos de la boutique, lisible par tous (ce sont les photos du site) */
+  if (!props.getProperty('DOSSIER_BOUTIQUE_ID') || !dossierExiste_(props.getProperty('DOSSIER_BOUTIQUE_ID'))) {
+    const dossiers = DriveApp.getFoldersByName(CONFIG.DOSSIER_BOUTIQUE);
+    const dossier = dossiers.hasNext() ? dossiers.next() : DriveApp.createFolder(CONFIG.DOSSIER_BOUTIQUE);
+    props.setProperty('DOSSIER_BOUTIQUE_ID', dossier.getId());
+  }
+  try {
+    DriveApp.getFolderById(props.getProperty('DOSSIER_BOUTIQUE_ID'))
+      .setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (err) {
+    console.warn('Partage du dossier boutique : ' + err);
+  }
+
+  viderCacheBoutique_();
+}
+
+/* Crée l'onglet s'il manque, pose les titres, ajoute les colonnes manquantes */
+function preparerOnglet_(ss, nom, colonnes) {
+  let sheet = ss.getSheetByName(nom);
+  if (!sheet) sheet = ss.insertSheet(nom);
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1, 1, 1, colonnes.length).setValues([colonnes]);
+  } else {
+    const existantes = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    colonnes.filter(c => existantes.indexOf(c) === -1).forEach(c => sheet.getRange(1, sheet.getLastColumn() + 1).setValue(c));
+  }
+  sheet.setFrozenRows(1);
+  sheet.getRange(1, 1, 1, colonnes.length)
+    .setFontWeight('bold').setBackground('#F5F1EB').setFontColor('#6B4F3F').setWrap(true).setVerticalAlignment('middle');
+  sheet.setRowHeight(1, 40);
+  return sheet;
+}
+
+function mettreAJourBoutique() {
+  viderCacheBoutique_();
+  const resultat = lireInventairePublic_();
+  const nb = resultat.meubles.filter(m => m.statut !== 'Vendu').length;
+  try {
+    SpreadsheetApp.getActiveSpreadsheet().toast('Boutique à jour : ' + nb + ' meuble(s) en vente ou réservé(s) sur le site.', CONFIG.NOM_ATELIER, 8);
+  } catch (e) { /* lancé hors du Sheets */ }
+}
+
+function viderCacheBoutique_() {
+  try { CacheService.getScriptCache().remove(CLE_CACHE_INVENTAIRE); } catch (e) { /* rien */ }
+}
+
+
+/* ── Ajout ou modification d'un meuble dans l'onglet Inventaire ── */
+function quandInventaireModifie_(e) {
+  const sheet = e.range.getSheet();
+  const col = indexColonnes_(sheet);
+  const props = PropertiesService.getScriptProperties();
+  const debut = Math.max(2, e.range.getRow());
+  const fin = e.range.getRow() + e.range.getNumRows() - 1;
+  const premiere = e.range.getColumn();
+  const derniere = premiere + e.range.getNumColumns() - 1;
+  const touche = titre => col[titre] !== undefined && col[titre] + 1 >= premiere && col[titre] + 1 <= derniere;
+
+  for (let r = debut; r <= fin; r++) {
+    const cellule = titre => sheet.getRange(r, col[titre] + 1);
+    const nom = texte_(cellule('Nom').getValue());
+
+    /* Nouveau meuble : code, statut Brouillon, date, dossier photos */
+    if (nom && !texte_(cellule('Code').getValue())) {
+      const lock = LockService.getScriptLock();
+      lock.waitLock(20000);
+      try {
+        const code = 'M-' + String(Number(props.getProperty('COMPTEUR_MEUBLES') || 0) + 1).padStart(3, '0');
+        props.setProperty('COMPTEUR_MEUBLES', code.slice(2));
+        cellule('Code').setValue(code);
+        if (!texte_(cellule('Statut').getValue())) cellule('Statut').setValue('Brouillon');
+        cellule('Ajouté le').setValue(debutJournee_(new Date()));
+        const parent = DriveApp.getFolderById(props.getProperty('DOSSIER_BOUTIQUE_ID'));
+        const dossier = parent.createFolder(code + ' — ' + nom.replace(/[\\/:*?"<>|]/g, '_'));
+        cellule('Dossier photos').setValue(dossier.getUrl());
+      } finally {
+        lock.releaseLock();
+      }
+    }
+
+    /* Remis en vente à la main : on efface la réservation */
+    if (touche('Statut') && texte_(cellule('Statut').getValue()) === 'Disponible') {
+      cellule('Réservé par').setValue('');
+      cellule('Réservé le').setValue('');
+    }
+  }
+  viderCacheBoutique_();
+}
+
+
+/* ── Ce que le site affiche (lu par la page « Meubles à vendre ») ── */
+function lireInventairePublic_() {
+  const cache = CacheService.getScriptCache();
+  const enCache = cache.get(CLE_CACHE_INVENTAIRE);
+  if (enCache) return JSON.parse(enCache);
+
+  const props = PropertiesService.getScriptProperties();
+  const ss = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID'));
+  const sheet = ss.getSheetByName(CONFIG.ONGLET_INVENTAIRE);
+  const resultat = { ok: true, meubles: [], maj: new Date().toISOString() };
+  if (!sheet || sheet.getLastRow() < 2) {
+    cache.put(CLE_CACHE_INVENTAIRE, JSON.stringify(resultat), 600);
+    return resultat;
+  }
+
+  const col = indexColonnes_(sheet);
+  const donnees = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn()).getValues();
+  const limiteNouveau = ajouterJours_(new Date(), -CONFIG.JOURS_NOUVEAUTE);
+  const nbPhotosParLigne = [];
+  let vendus = [];
+
+  donnees.forEach((d, i) => {
+    const statut = texte_(d[col['Statut']]);
+    const nom = texte_(d[col['Nom']]);
+    if (!nom || ['Disponible', 'Réservé', 'Vendu'].indexOf(statut) === -1) return;
+
+    const photos = photosDuDossier_(texte_(d[col['Dossier photos']]));
+    nbPhotosParLigne.push([i + 2, photos.apres.length + (photos.avant ? 1 : 0)]);
+    const ajoute = d[col['Ajouté le']];
+    const meuble = {
+      code: texte_(d[col['Code']]),
+      nom: nom,
+      categorie: texte_(d[col['Catégorie']]) || 'Autre',
+      prix: Number(d[col['Prix ($)']]) || null,
+      statut: statut,
+      dimensions: texte_(d[col['Dimensions']]),
+      materiau: texte_(d[col['Matériau']]),
+      finition: texte_(d[col['Finition / style']]),
+      description: texte_(d[col['Description']]),
+      nouveau: statut === 'Disponible' && ajoute instanceof Date && ajoute >= limiteNouveau,
+      photos: photos.apres,
+      avant: photos.avant,
+    };
+    if (statut === 'Vendu') {
+      meuble._tri = (d[col['Réservé le']] instanceof Date ? d[col['Réservé le']] : ajoute instanceof Date ? ajoute : new Date(0)).getTime();
+      vendus.push(meuble);
+    } else {
+      resultat.meubles.push(meuble);
+    }
+  });
+
+  vendus.sort((a, b) => b._tri - a._tri);
+  vendus = vendus.slice(0, CONFIG.MAX_VENDUS_AFFICHES);
+  vendus.forEach(m => { delete m._tri; resultat.meubles.push(m); });
+
+  /* Nombre de photos trouvées, pour que l'atelier voie si ses photos sont bien détectées */
+  if (col['Nb photos'] !== undefined) {
+    nbPhotosParLigne.forEach(([ligne, nb]) => sheet.getRange(ligne, col['Nb photos'] + 1).setValue(nb));
+  }
+
+  const json = JSON.stringify(resultat);
+  if (json.length < 95000) cache.put(CLE_CACHE_INVENTAIRE, json, 600);
+  return resultat;
+}
+
+/* Photos d'un dossier Drive : « avant » à part, les autres triées par nom de fichier */
+function photosDuDossier_(lienDossier) {
+  const resultat = { apres: [], avant: null };
+  const m = /folders\/([A-Za-z0-9_-]+)/.exec(lienDossier || '') || /[?&]id=([A-Za-z0-9_-]+)/.exec(lienDossier || '');
+  if (!m) return resultat;
+  let dossier;
+  try { dossier = DriveApp.getFolderById(m[1]); } catch (e) { return resultat; }
+
+  const fichiers = [];
+  const iterateur = dossier.getFiles();
+  while (iterateur.hasNext()) {
+    const f = iterateur.next();
+    if (String(f.getMimeType()).indexOf('image/') !== 0) continue;
+    try {
+      if (f.getSharingAccess() !== DriveApp.Access.ANYONE_WITH_LINK) {
+        f.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      }
+    } catch (err) {
+      console.warn('Partage photo ' + f.getName() + ' : ' + err);
+    }
+    fichiers.push({ nom: f.getName(), id: f.getId() });
+  }
+  fichiers.sort((a, b) => a.nom.localeCompare(b.nom, 'fr', { numeric: true }));
+
+  const versUrl = id => ({
+    url: 'https://lh3.googleusercontent.com/d/' + id + '=w1400',
+    mini: 'https://lh3.googleusercontent.com/d/' + id + '=w700',
+  });
+  fichiers.forEach(f => {
+    if (!resultat.avant && /avant|before/i.test(f.nom)) resultat.avant = versUrl(f.id);
+    else resultat.apres.push(versUrl(f.id));
+  });
+  resultat.apres = resultat.apres.slice(0, 8);
+  return resultat;
+}
+
+
+/* ── Réservation d'un meuble depuis le site ── */
+function traiterReservation_(payload) {
+  const c = payload.champs || {};
+  const code = texte_(payload.code);
+  const manquants = ['prenom', 'nom', 'email', 'telephone'].filter(k => !texte_(c[k]));
+  if (!code || manquants.length) return { ok: false, erreur: 'Champs manquants : ' + manquants.join(', ') };
+  if (!REGEX_COURRIEL.test(texte_(c.email))) return { ok: false, erreur: 'Courriel invalide' };
+  if (texte_(c.consentement) === '' ) return { ok: false, erreur: 'Consentement requis' };
+
+  const props = PropertiesService.getScriptProperties();
+  const ss = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID'));
+  const inv = ss.getSheetByName(CONFIG.ONGLET_INVENTAIRE);
+  const res = ss.getSheetByName(CONFIG.ONGLET_RESERVATIONS);
+  if (!inv || !res) return { ok: false, erreur: 'Boutique non installée' };
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  let meuble, numero, payerAvant, numLigne;
+  try {
+    const ci = indexColonnes_(inv);
+    const lignes = inv.getLastRow() < 2 ? [] : inv.getRange(2, 1, inv.getLastRow() - 1, inv.getLastColumn()).getValues();
+    const index = lignes.findIndex(d => texte_(d[ci['Code']]) === code);
+    if (index === -1) return { ok: false, erreur: 'introuvable' };
+    const d = lignes[index];
+    if (texte_(d[ci['Statut']]) !== 'Disponible') return { ok: false, erreur: 'deja_reserve' };
+
+    meuble = { code: code, nom: texte_(d[ci['Nom']]), prix: Number(d[ci['Prix ($)']]) || 0 };
+    const maintenant = new Date();
+    const ligneInv = index + 2;
+    inv.getRange(ligneInv, ci['Statut'] + 1).setValue('Réservé');
+    inv.getRange(ligneInv, ci['Réservé par'] + 1).setValue(nettoyer_(texte_(c.prenom) + ' ' + texte_(c.nom)));
+    inv.getRange(ligneInv, ci['Réservé le'] + 1).setValue(debutJournee_(maintenant));
+
+    numero = 'R-' + String(Number(props.getProperty('COMPTEUR_RESERVATIONS') || 0) + 1).padStart(4, '0');
+    props.setProperty('COMPTEUR_RESERVATIONS', numero.slice(2));
+    payerAvant = ajouterJours_(maintenant, CONFIG.DELAI_RESERVATION_JOURS);
+
+    const cr = indexColonnes_(res);
+    const ligne = new Array(res.getLastColumn()).fill('');
+    const poser = (t, v) => { if (cr[t] !== undefined) ligne[cr[t]] = v; };
+    poser('N°', numero);
+    poser('Reçue le', maintenant);
+    poser('Statut', 'Nouvelle réservation');
+    poser('Payer avant le', payerAvant);
+    poser('Code meuble', code);
+    poser('Meuble', meuble.nom);
+    poser('Prix ($)', meuble.prix);
+    poser('Prénom', nettoyer_(c.prenom));
+    poser('Nom', nettoyer_(c.nom));
+    poser('Courriel', nettoyer_(c.email));
+    poser('Téléphone', nettoyer_(c.telephone));
+    poser('Remise', texte_(c.remise) === 'livraison' ? 'Livraison à organiser' : 'Cueillette');
+    poser('Message', nettoyer_(c.message));
+    res.appendRow(ligne);
+    numLigne = res.getLastRow();
+  } finally {
+    lock.releaseLock();
+  }
+  viderCacheBoutique_();
+
+  const lienLigne = ss.getUrl() + '#gid=' + res.getSheetId() + '&range=A' + numLigne;
+  try { alerterReservation_(numero, meuble, c, payerAvant, lienLigne); } catch (err) { console.error('Alerte réservation : ' + err); }
+  try { confirmerReservation_(numero, meuble, c, payerAvant); } catch (err) { console.error('Confirmation réservation : ' + err); }
+
+  return {
+    ok: true,
+    numero: numero,
+    prix: meuble.prix,
+    payerAvant: dateEnFrancais_(payerAvant),
+    interac: courrielInterac_(),
+  };
+}
+
+function courrielInterac_() {
+  return CONFIG.COURRIEL_INTERAC || PropertiesService.getScriptProperties().getProperty('COURRIEL_ATELIER');
+}
+
+function alerterReservation_(numero, meuble, c, payerAvant, lienLigne) {
+  const ligne = (t, v) => v ? '<tr><td style="padding:5px 12px 5px 0;color:#9C8578;">' + t + '</td><td>' + echapper_(v).replace(/\n/g, '<br>') + '</td></tr>' : '';
+  MailApp.sendEmail({
+    to: PropertiesService.getScriptProperties().getProperty('COURRIEL_ATELIER'),
+    replyTo: texte_(c.email),
+    subject: numero + ' — Réservation : ' + meuble.nom + ' (' + texte_(c.prenom) + ' ' + texte_(c.nom) + ')',
+    name: CONFIG.NOM_ATELIER + ' — Boutique',
+    htmlBody:
+      '<div style="font-family:Arial,sans-serif;color:#3D2E25;max-width:620px;">' +
+        '<h2 style="font-family:Georgia,serif;color:#A3624A;font-weight:normal;">Meuble réservé : ' + echapper_(meuble.nom) + '</h2>' +
+        '<table style="border-collapse:collapse;font-size:14px;">' +
+          ligne('Réservation', numero) + ligne('Meuble', meuble.code + ' — ' + meuble.nom) +
+          ligne('Prix', meuble.prix ? meuble.prix + ' $' : '') +
+          ligne('Client', texte_(c.prenom) + ' ' + texte_(c.nom)) + ligne('Courriel', c.email) + ligne('Téléphone', c.telephone) +
+          ligne('Remise', texte_(c.remise) === 'livraison' ? 'Livraison à organiser' : 'Cueillette') +
+          ligne('Message', c.message) + ligne('Paiement attendu avant le', dateEnFrancais_(payerAvant)) +
+        '</table>' +
+        '<p style="margin-top:16px;">Le meuble est passé à « Réservé » sur le site. Quand le virement Interac arrive, mettez la réservation à <strong>Paiement reçu</strong> ; ' +
+          'quand le client repart avec, à <strong>Remis au client</strong> (le meuble passe Vendu). Si rien n\'arrive, <strong>Annulée</strong> le remet en vente.</p>' +
+        '<p><a href="' + lienLigne + '" style="color:#A3624A;">Ouvrir la réservation</a></p>' +
+      '</div>',
+  });
+}
+
+function confirmerReservation_(numero, meuble, c, payerAvant) {
+  const prix = meuble.prix ? meuble.prix + ' $' : 'le montant convenu';
+  const livraison = texte_(c.remise) === 'livraison';
+  const lieu = CONFIG.LIEU_CUEILLETTE ? ' ' + CONFIG.LIEU_CUEILLETTE : '';
+  const texte =
+    'Bonjour ' + texte_(c.prenom) + ',\n\n' +
+    'Bonne nouvelle : « ' + meuble.nom + ' » vous est réservé jusqu\'au ' + dateEnFrancais_(payerAvant) + ' (référence ' + numero + ').\n\n' +
+    'Pour confirmer votre achat, deux options :\n' +
+    '• Virement Interac de ' + prix + ' à ' + courrielInterac_() + ', en indiquant ' + numero + ' dans le message ;\n' +
+    '• ou paiement à la cueillette' + lieu + ' : répondez à ce courriel pour fixer un rendez-vous.\n\n' +
+    (livraison
+      ? 'Vous avez demandé une livraison : je vous écris très vite pour convenir de la date et des frais.\n\n'
+      : 'Je vous écris très vite pour convenir du moment de la cueillette.\n\n') +
+    'Sans nouvelles de votre part d\'ici le ' + dateEnFrancais_(payerAvant) + ', la pièce sera remise en vente.\n\n' +
+    'Merci de faire vivre une deuxième vie à ce meuble !\n' + CONFIG.SIGNATURE + '\n' + CONFIG.TELEPHONE;
+
+  MailApp.sendEmail({
+    to: texte_(c.email),
+    replyTo: PropertiesService.getScriptProperties().getProperty('COURRIEL_ATELIER'),
+    subject: 'Votre réservation ' + numero + ' : ' + meuble.nom + ' — ' + CONFIG.NOM_ATELIER,
+    body: texte,
+    htmlBody: '<div style="font-family:Arial,sans-serif;color:#3D2E25;line-height:1.6;max-width:600px;">' + echapper_(texte).replace(/\n/g, '<br>') + '</div>',
+    name: CONFIG.NOM_ATELIER,
+  });
+}
+
+
+/* ── Changement de statut d'une réservation → inventaire mis à jour ── */
+function quandReservationModifiee_(e) {
+  const sheet = e.range.getSheet();
+  const cr = indexColonnes_(sheet);
+  if (cr['Statut'] === undefined) return;
+  const colStatut = cr['Statut'] + 1;
+  const premiere = e.range.getColumn();
+  if (colStatut < premiere || colStatut > premiere + e.range.getNumColumns() - 1) return;
+
+  const inv = sheet.getParent().getSheetByName(CONFIG.ONGLET_INVENTAIRE);
+  if (!inv) return;
+  const ci = indexColonnes_(inv);
+  const codes = inv.getLastRow() < 2 ? [] : inv.getRange(2, ci['Code'] + 1, inv.getLastRow() - 1, 1).getValues().map(r => texte_(r[0]));
+
+  for (let r = Math.max(2, e.range.getRow()); r < e.range.getRow() + e.range.getNumRows(); r++) {
+    const statut = texte_(sheet.getRange(r, colStatut).getValue());
+    const code = texte_(sheet.getRange(r, cr['Code meuble'] + 1).getValue());
+    const index = codes.indexOf(code);
+    if (index === -1) continue;
+    const ligneInv = index + 2;
+    const statutInv = inv.getRange(ligneInv, ci['Statut'] + 1);
+
+    if (statut === 'Remis au client') {
+      statutInv.setValue('Vendu');
+    } else if (statut === 'Annulée' && texte_(statutInv.getValue()) === 'Réservé') {
+      statutInv.setValue('Disponible');
+      inv.getRange(ligneInv, ci['Réservé par'] + 1).setValue('');
+      inv.getRange(ligneInv, ci['Réservé le'] + 1).setValue('');
+    } else if (statut === 'Paiement reçu' || statut === 'Nouvelle réservation') {
+      if (texte_(statutInv.getValue()) === 'Disponible') statutInv.setValue('Réservé');
+    }
+  }
+  viderCacheBoutique_();
+}
+
+
+/* ── Réservations dont le paiement n'est pas arrivé (pour le courriel du matin) ── */
+function reservationsAPayer_(ss, finJournee) {
+  const res = ss.getSheetByName(CONFIG.ONGLET_RESERVATIONS);
+  if (!res || res.getLastRow() < 2) return [];
+  const cr = indexColonnes_(res);
+  const aujourdHui = debutJournee_(new Date());
+  return res.getRange(2, 1, res.getLastRow() - 1, res.getLastColumn()).getValues()
+    .map((d, i) => ({ d: d, ligne: i + 2 }))
+    .filter(({ d }) => texte_(d[cr['Statut']]) === 'Nouvelle réservation' &&
+      d[cr['Payer avant le']] instanceof Date && d[cr['Payer avant le']] <= finJournee)
+    .map(({ d, ligne }) => ({
+      ligne: ligne,
+      lien: ss.getUrl() + '#gid=' + res.getSheetId() + '&range=A' + ligne,
+      numero: d[cr['N°']],
+      client: (texte_(d[cr['Prénom']]) + ' ' + texte_(d[cr['Nom']])).trim(),
+      meuble: 'Réservation boutique',
+      service: texte_(d[cr['Meuble']]),
+      montant: d[cr['Prix ($)']],
+      courriel: texte_(d[cr['Courriel']]),
+      telephone: d[cr['Téléphone']],
+      nbRelances: 0,
+      enRetard: Math.round((aujourdHui - debutJournee_(d[cr['Payer avant le']])) / 86400000),
+      raison: 'Paiement pas encore reçu : relancer le client, ou mettre la réservation à « Annulée » pour remettre le meuble en vente',
+    }));
+}
+
+
+/* ── Inscription « Être averti des nouveautés » ── */
+function traiterAbonnement_(payload) {
+  const c = payload.champs || {};
+  const courriel = texte_(c.email).toLowerCase();
+  if (!REGEX_COURRIEL.test(courriel)) return { ok: false, erreur: 'Courriel invalide' };
+  if (texte_(c.consentement) === '') return { ok: false, erreur: 'Consentement requis' };
+
+  const props = PropertiesService.getScriptProperties();
+  const ss = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID'));
+  const abo = ss.getSheetByName(CONFIG.ONGLET_ABONNES);
+  if (!abo) return { ok: false, erreur: 'Boutique non installée' };
+  const ca = indexColonnes_(abo);
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const existants = abo.getLastRow() < 2 ? [] : abo.getRange(2, ca['Courriel'] + 1, abo.getLastRow() - 1, 1).getValues().map(r => texte_(r[0]).toLowerCase());
+    if (existants.indexOf(courriel) !== -1) return { ok: true, deja: true };
+    const ligne = new Array(abo.getLastColumn()).fill('');
+    ligne[ca['Inscrit le']] = new Date();
+    ligne[ca['Prénom']] = nettoyer_(c.prenom);
+    ligne[ca['Courriel']] = nettoyer_(courriel);
+    ligne[ca['Intérêt']] = nettoyer_(c.interet);
+    ligne[ca['Source']] = 'Site — Meubles à vendre';
+    abo.appendRow(ligne);
+  } finally {
+    lock.releaseLock();
+  }
+
+  try {
+    MailApp.sendEmail({
+      to: courriel,
+      replyTo: props.getProperty('COURRIEL_ATELIER'),
+      subject: 'Vous serez averti des nouveaux meubles — ' + CONFIG.NOM_ATELIER,
+      name: CONFIG.NOM_ATELIER,
+      body: 'Bonjour' + (texte_(c.prenom) ? ' ' + texte_(c.prenom) : '') + ',\n\n' +
+        'Merci ! Je vous écrirai dès qu\'une nouvelle pièce revalorisée sera prête à partir.\n' +
+        'Pour ne plus recevoir ces avis, répondez simplement « désabonner » à ce courriel.\n\n' +
+        CONFIG.SIGNATURE + '\n' + CONFIG.TELEPHONE,
+    });
+  } catch (err) {
+    console.error('Confirmation abonnement : ' + err);
+  }
+  return { ok: true };
 }
 
 

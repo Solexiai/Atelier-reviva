@@ -1580,3 +1580,10 @@ em {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Header aminci au défilement (ordinateur) */
+@media (min-width: 769px) {
+  .header-inner, .logo-circle { transition: padding var(--dur-med) var(--ease), width var(--dur-med) var(--ease), height var(--dur-med) var(--ease), transform var(--dur-med) var(--ease); }
+  .site-header.scrolled .header-inner { padding-top: 0.35rem; padding-bottom: 0.35rem; }
+  .site-header.scrolled .logo-circle { width: 54px; height: 54px; }
+}

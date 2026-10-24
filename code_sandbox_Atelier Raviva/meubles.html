@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meubles à vendre – Atelier Reviva | Meubles revalorisés Québec</title>
-  <meta name="description" content="Parcourez nos meubles restaurés et revalorisés à vendre. Pièces uniques, style raffiné. Transactions sécurisées via Shopify. Atelier Reviva, Québec." />
+  <meta name="description" content="Meubles revalorisés à vendre : pièces uniques transformées à la main par Atelier Reviva. Réservation en ligne, paiement Interac ou à la cueillette." />
   <link rel="canonical" href="https://atelierreviva.ca/meubles.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -54,262 +54,110 @@
 
   <main>
 
-    <!-- HERO PAGE -->
-    <section class="page-hero">
+    <!-- EN-TÊTE COMPACT -->
+    <section class="page-hero page-hero--compact">
       <nav class="breadcrumb" aria-label="Fil d'Ariane"><a href="index.html">Accueil</a><span>/</span><span>Meubles à vendre</span></nav>
       <span class="page-hero-eyebrow">Boutique</span>
       <h1>Meubles <em>à vendre</em></h1>
-      <p>Découvrez notre sélection de meubles revalorisés, restaurés et prêts à intégrer votre décor. Chaque pièce est choisie, transformée et présentée avec soin.</p>
+      <p>Des pièces uniques, revalorisées à la main dans notre atelier. Chaque meuble n'existe qu'en un seul exemplaire.</p>
+      <p class="shop-count" id="shopCount" aria-live="polite"></p>
     </section>
 
-    <!-- BANDEAU SHOPIFY SÉCURISÉ -->
-    <section style="background:var(--cream); padding:2rem var(--space-md); border-bottom:1px solid var(--sand-light);">
+    <!-- BOUTIQUE -->
+    <section class="shop-section" id="boutique">
       <div class="container">
-        <div class="shopify-trust-bar">
-          <div class="trust-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span><strong>Paiement 100% sécurisé</strong> via Shopify</span>
-          </div>
-          <div class="trust-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-            <span><strong>Toutes cartes acceptées</strong> — Visa, Mastercard</span>
-          </div>
-          <div class="trust-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            <span><strong>Confirmation rapide</strong> par courriel</span>
-          </div>
-          <div class="trust-item">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-            <span><strong>Réponse dans les 24h</strong> pour toute question</span>
-          </div>
+
+        <div class="filter-bar" id="shopFilters" role="group" aria-label="Filtrer par catégorie" hidden></div>
+
+        <!-- Aucune pièce disponible -->
+        <div class="shop-empty" id="shopEmpty" hidden>
+          <div class="shop-empty-mark" aria-hidden="true">✦</div>
+          <h2 class="shop-empty-title">Nouvelle collection <em>en préparation</em></h2>
+          <p class="shop-empty-text" id="shopEmptyText">Les prochaines pièces sont en train de prendre vie à l'atelier : décapage, réparations, teintes choisies avec soin. Inscrivez-vous pour les découvrir avant tout le monde.</p>
+          <a href="#nouveautes" class="btn btn-primary">Être averti des nouveautés</a>
         </div>
 
-        <!-- Explication Shopify -->
-        <div style="background:rgba(196,123,90,0.05); border:1px solid rgba(196,123,90,0.15); border-radius:var(--radius-md); padding:1.5rem 2rem; max-width:760px; margin:0 auto; text-align:center;">
-          <p style="font-size:0.86rem; color:var(--brown-text); line-height:1.7;">
-            <strong style="color:var(--text-main);">Comment ça fonctionne ?</strong><br>
-            Cliquez sur « Acheter via Shopify » pour être redirigé vers notre boutique Shopify sécurisée. Vous pourrez y compléter votre achat en toute sécurité. Les transactions sont gérées exclusivement par Shopify — un environnement de paiement certifié, fiable et protégé.
-          </p>
+        <!-- Erreur de chargement -->
+        <div class="shop-empty shop-error" id="shopError" hidden>
+          <h2 class="shop-empty-title">La boutique se fait attendre…</h2>
+          <p class="shop-empty-text">Impossible d'afficher les meubles pour le moment. Réessayez dans quelques instants, ou contactez-nous au <a href="tel:+15144306221">(514) 430-6221</a>.</p>
+          <button type="button" class="btn btn-outline" id="shopRetry">Réessayer</button>
         </div>
+
+        <!-- Grille (remplie depuis l'inventaire de l'atelier) -->
+        <div class="shop-grid" id="productGrid" aria-live="polite" aria-busy="true">
+          <div class="shop-card shop-card--skeleton" aria-hidden="true"><div class="shop-card-img"></div><div class="shop-card-body"><span></span><span></span><span></span></div></div>
+          <div class="shop-card shop-card--skeleton" aria-hidden="true"><div class="shop-card-img"></div><div class="shop-card-body"><span></span><span></span><span></span></div></div>
+          <div class="shop-card shop-card--skeleton" aria-hidden="true"><div class="shop-card-img"></div><div class="shop-card-body"><span></span><span></span><span></span></div></div>
+        </div>
+        <p class="shop-filter-empty" id="shopFilterEmpty" hidden></p>
+
+        <ul class="shop-promise" aria-label="Nos engagements">
+          <li>Pièce unique, transformée à la main</li>
+          <li>Réservée <span id="promiseDelay">48 h</span> pour vous, sans payer en ligne</li>
+          <li>Virement Interac ou paiement à la cueillette</li>
+          <li>Cueillette ou livraison à convenir</li>
+        </ul>
       </div>
     </section>
 
-    <!-- FILTRES -->
-    <section style="background:var(--ivory); padding:3rem var(--space-md) 0;">
-      <div class="container">
-        <div class="filter-bar" role="group" aria-label="Filtrer par catégorie">
-          <button class="filter-btn active" data-filter="all">Tout voir</button>
-          <button class="filter-btn" data-filter="commode">Commodes</button>
-          <button class="filter-btn" data-filter="buffet">Buffets</button>
-          <button class="filter-btn" data-filter="table">Tables</button>
-          <button class="filter-btn" data-filter="chevet">Chevets</button>
-          <button class="filter-btn" data-filter="chaise">Chaises</button>
-          <button class="filter-btn" data-filter="appoint">Mobilier d'appoint</button>
-          <button class="filter-btn" data-filter="nouveau">Nouveautés</button>
-        </div>
+    <!-- ÊTRE AVERTI DES NOUVEAUTÉS -->
+    <section class="shop-notify" id="nouveautes">
+      <div class="container-narrow">
+        <p class="section-label">Nouveautés</p>
+        <h2 class="section-title">Soyez les premiers <em>informés</em></h2>
+        <p class="shop-notify-intro">Les plus belles pièces partent vite. Laissez votre courriel : vous recevrez un mot dès qu'un nouveau meuble est prêt, avant sa mise en ligne publique.</p>
+        <form class="shop-notify-form" id="notifyForm" novalidate>
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp-field" />
+          <div class="shop-notify-fields">
+            <label class="visually-hidden" for="notifyPrenom">Prénom</label>
+            <input type="text" id="notifyPrenom" name="prenom" class="form-input" placeholder="Prénom" autocomplete="given-name" />
+            <label class="visually-hidden" for="notifyEmail">Courriel</label>
+            <input type="email" id="notifyEmail" name="email" class="form-input" placeholder="Votre courriel" autocomplete="email" required />
+            <button type="submit" class="btn btn-primary">M'avertir</button>
+          </div>
+          <label class="form-check shop-notify-consent">
+            <input type="checkbox" name="consentement" required />
+            <span class="form-check-label">J'accepte de recevoir par courriel les nouveautés d'Atelier Reviva. Désabonnement en tout temps.</span>
+          </label>
+          <p class="form-alert" id="notifyMessage" role="status" hidden></p>
+        </form>
       </div>
     </section>
 
-    <!-- GRILLE MEUBLES -->
-    <section class="section-pad" style="background:var(--ivory); padding-top:2rem;" id="shopGrid">
-      <div class="container">
-        <div class="shop-grid" id="productGrid">
-
-          <!-- Produit 1 — Disponible -->
-          <article class="shop-card" data-category="commode nouveau">
-            <div class="shop-card-img">
-              <img src="https://images.unsplash.com/photo-1567016432779-094069958ea5?w=700&q=80&auto=format&fit=crop" alt="Commode terracotta revalorisée — Atelier Reviva" loading="lazy" />
-              <span class="shop-card-status status-available">Disponible</span>
-            </div>
-            <div class="shop-card-body">
-              <h2 class="shop-card-name">Commode Terracotta</h2>
-              <p class="shop-card-details">120 × 50 × 90 cm · Bois massif · Style vintage · Quincaillerie laiton</p>
-              <div class="shop-card-row">
-                <span class="shop-card-price">695 $</span>
-                <a href="#shopify-url-commode-terracotta" class="btn btn-primary btn-sm">Acheter via Shopify</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Produit 2 — Disponible -->
-          <article class="shop-card" data-category="buffet">
-            <div class="shop-card-img">
-              <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=700&q=80&auto=format&fit=crop" alt="Buffet ivoire satiné revalorisé — Atelier Reviva" loading="lazy" />
-              <span class="shop-card-status status-available">Disponible</span>
-            </div>
-            <div class="shop-card-body">
-              <h2 class="shop-card-name">Buffet Ivoire Satiné</h2>
-              <p class="shop-card-details">160 × 45 × 85 cm · Bois peint · Style scandinave · Finition satinée</p>
-              <div class="shop-card-row">
-                <span class="shop-card-price">845 $</span>
-                <a href="#shopify-url-buffet-ivoire" class="btn btn-primary btn-sm">Acheter via Shopify</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Produit 3 — Vendu -->
-          <article class="shop-card" data-category="chevet">
-            <div class="shop-card-img">
-              <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=700&q=80&auto=format&fit=crop" alt="Table de nuit naturelle revalorisée — Atelier Reviva" loading="lazy" />
-              <span class="shop-card-status status-sold">Vendu</span>
-            </div>
-            <div class="shop-card-body">
-              <h2 class="shop-card-name">Table de Nuit Naturelle</h2>
-              <p class="shop-card-details">50 × 40 × 60 cm · Chêne naturel · Style artisanal</p>
-              <div class="shop-card-row">
-                <span class="shop-card-price" style="color:var(--text-muted);">295 $</span>
-                <span class="btn btn-disabled btn-sm">Vendu</span>
-              </div>
-            </div>
-          </article>
-
-          <!-- Produit 4 — Disponible -->
-          <article class="shop-card" data-category="commode">
-            <div class="shop-card-img">
-              <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=700&q=80&auto=format&fit=crop" alt="Commode camel vintage — Atelier Reviva" loading="lazy" />
-              <span class="shop-card-status status-available">Disponible</span>
-            </div>
-            <div class="shop-card-body">
-              <h2 class="shop-card-name">Commode Camel Velours</h2>
-              <p class="shop-card-details">100 × 48 × 88 cm · Bois peint · Style bohème · Finition mate</p>
-              <div class="shop-card-row">
-                <span class="shop-card-price">580 $</span>
-                <a href="#shopify-url-commode-camel" class="btn btn-primary btn-sm">Acheter via Shopify</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Produit 5 — Réservé -->
-          <article class="shop-card" data-category="table">
-            <div class="shop-card-img">
-              <img src="https://images.unsplash.com/photo-1618220252344-8ec99ec624b1?w=700&q=80&auto=format&fit=crop" alt="Table basse chêne blond — Atelier Reviva" loading="lazy" />
-              <span class="shop-card-status status-reserved">Réservé</span>
-            </div>
-            <div class="shop-card-body">
-              <h2 class="shop-card-name">Table Basse Chêne Blond</h2>
-              <p class="shop-card-details">110 × 60 × 42 cm · Chêne teinté · Style nordique · Vernis mat</p>
-              <div class="shop-card-row">
-                <span class="shop-card-price">420 $</span>
-                <span class="btn btn-disabled btn-sm">Réservé</span>
-              </div>
-            </div>
-          </article>
-
-          <!-- Produit 6 — Disponible -->
-          <article class="shop-card" data-category="appoint nouveau">
-            <div class="shop-card-img">
-              <img src="https://images.unsplash.com/photo-1549187774-b4e9b0445b41?w=700&q=80&auto=format&fit=crop" alt="Meuble d'appoint blanc cassé — Atelier Reviva" loading="lazy" />
-              <span class="shop-card-status status-available">Disponible</span>
-            </div>
-            <div class="shop-card-body">
-              <h2 class="shop-card-name">Meuble d'Appoint Lin</h2>
-              <p class="shop-card-details">55 × 35 × 75 cm · Bois peint · Style minimaliste · Blanc lin</p>
-              <div class="shop-card-row">
-                <span class="shop-card-price">340 $</span>
-                <a href="#shopify-url-appoint-lin" class="btn btn-primary btn-sm">Acheter via Shopify</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- 6 emplacements vides — à remplir avec futurs produits Shopify -->
-          <article class="shop-card" data-category="coming">
-            <div class="shop-card-img">
-              <div class="shop-placeholder">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                <p class="shop-placeholder-label">Prochainement</p>
-              </div>
-              <span class="shop-card-status status-coming">Bientôt disponible</span>
-            </div>
-            <div class="shop-card-body">
-              <h2 class="shop-card-name">Nouveau meuble en cours</h2>
-              <p class="shop-card-details">Suivez-nous sur Instagram pour voir les nouveautés en avant-première.</p>
-              <div class="shop-card-row">
-                <span class="shop-card-price" style="color:var(--text-muted);">— $</span>
-                <a href="contact.html" class="btn btn-outline btn-sm">Me prévenir</a>
-              </div>
-            </div>
-          </article>
-
-          <article class="shop-card" data-category="coming">
-            <div class="shop-card-img">
-              <div class="shop-placeholder">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                <p class="shop-placeholder-label">Prochainement</p>
-              </div>
-              <span class="shop-card-status status-coming">Bientôt disponible</span>
-            </div>
-            <div class="shop-card-body">
-              <h2 class="shop-card-name">Nouveau meuble en cours</h2>
-              <p class="shop-card-details">Suivez-nous sur Instagram pour voir les nouveautés en avant-première.</p>
-              <div class="shop-card-row">
-                <span class="shop-card-price" style="color:var(--text-muted);">— $</span>
-                <a href="contact.html" class="btn btn-outline btn-sm">Me prévenir</a>
-              </div>
-            </div>
-          </article>
-
-          <article class="shop-card" data-category="coming">
-            <div class="shop-card-img">
-              <div class="shop-placeholder">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                <p class="shop-placeholder-label">Prochainement</p>
-              </div>
-              <span class="shop-card-status status-coming">Bientôt disponible</span>
-            </div>
-            <div class="shop-card-body">
-              <h2 class="shop-card-name">Nouveau meuble en cours</h2>
-              <p class="shop-card-details">Suivez-nous sur Instagram pour voir les nouveautés en avant-première.</p>
-              <div class="shop-card-row">
-                <span class="shop-card-price" style="color:var(--text-muted);">— $</span>
-                <a href="contact.html" class="btn btn-outline btn-sm">Me prévenir</a>
-              </div>
-            </div>
-          </article>
-
-        </div>
-
-        <!-- Note SEO -->
-        <div style="background:var(--cream); border-radius:var(--radius-md); padding:2rem; margin-top:var(--space-lg); text-align:center; border:1px solid var(--sand-light);">
-          <p style="font-size:0.86rem; color:var(--brown-text); line-height:1.75; max-width:640px; margin:0 auto;">
-            Parcourez nos <strong>meubles restaurés et meubles revalorisés à vendre</strong>. Atelier Reviva propose des <strong>pièces uniques au style raffiné</strong>, idéales pour donner du caractère à votre intérieur. Nouveaux meubles ajoutés régulièrement — <a href="#" style="color:var(--terracotta);">suivez-nous sur Instagram</a> pour ne rien manquer.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- COMMENT ACHETER — Guide Shopify -->
-    <section class="section-pad" style="background:var(--sand-light);">
-      <div class="container" style="max-width:900px;">
+    <!-- COMMENT ACHETER -->
+    <section class="section-pad shop-how">
+      <div class="container" style="max-width:960px;">
         <div class="section-header">
-          <p class="section-label">Guide d'achat</p>
-          <h2 class="section-title">Comment acheter<br>en <em>toute sécurité</em></h2>
+          <p class="section-label">Simple et sans risque</p>
+          <h2 class="section-title">Comment <em>acheter</em></h2>
         </div>
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:var(--space-md);">
-          <div style="text-align:center; padding:2rem 1.5rem; background:var(--white); border-radius:var(--radius-md); border:1px solid var(--sand-light);">
-            <div style="width:56px; height:56px; border-radius:50%; background:var(--cream); border:1px solid var(--sand); display:flex; align-items:center; justify-content:center; margin:0 auto 1.2rem; font-family:var(--font-serif); font-size:1.5rem; color:var(--terracotta);">1</div>
-            <h3 style="font-family:var(--font-serif); font-size:1rem; margin-bottom:0.5rem;">Choisissez votre meuble</h3>
-            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.65;">Consultez notre sélection et cliquez sur la pièce qui vous plaît pour voir tous les détails.</p>
-          </div>
-          <div style="text-align:center; padding:2rem 1.5rem; background:var(--white); border-radius:var(--radius-md); border:1px solid var(--sand-light);">
-            <div style="width:56px; height:56px; border-radius:50%; background:var(--cream); border:1px solid var(--sand); display:flex; align-items:center; justify-content:center; margin:0 auto 1.2rem; font-family:var(--font-serif); font-size:1.5rem; color:var(--terracotta);">2</div>
-            <h3 style="font-family:var(--font-serif); font-size:1rem; margin-bottom:0.5rem;">Achetez via Shopify</h3>
-            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.65;">Cliquez sur « Acheter via Shopify » — vous serez redirigé vers notre boutique sécurisée pour compléter la transaction.</p>
-          </div>
-          <div style="text-align:center; padding:2rem 1.5rem; background:var(--white); border-radius:var(--radius-md); border:1px solid var(--sand-light);">
-            <div style="width:56px; height:56px; border-radius:50%; background:var(--cream); border:1px solid var(--sand); display:flex; align-items:center; justify-content:center; margin:0 auto 1.2rem; font-family:var(--font-serif); font-size:1.5rem; color:var(--terracotta);">3</div>
-            <h3 style="font-family:var(--font-serif); font-size:1rem; margin-bottom:0.5rem;">Confirmation &amp; remise</h3>
-            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.65;">Vous recevez une confirmation par courriel. Nous vous contactons ensuite pour organiser la remise ou la livraison.</p>
-          </div>
-        </div>
+        <ol class="how-steps">
+          <li class="how-step">
+            <span class="how-step-num">1</span>
+            <h3>Choisissez votre pièce</h3>
+            <p>Cliquez sur un meuble pour voir toutes ses photos, son « avant », ses dimensions et ses finitions.</p>
+          </li>
+          <li class="how-step">
+            <span class="how-step-num">2</span>
+            <h3>Réservez en ligne</h3>
+            <p>Un clic sur « Je le veux » et le meuble vous est réservé <span class="delai-texte">48 h</span>. Aucun paiement sur le site.</p>
+          </li>
+          <li class="how-step">
+            <span class="how-step-num">3</span>
+            <h3>Payez et récupérez</h3>
+            <p>Virement Interac ou paiement à la cueillette. On convient ensemble de la cueillette ou de la livraison.</p>
+          </li>
+        </ol>
       </div>
     </section>
 
     <!-- CTA -->
     <section class="section-pad" style="background:var(--ivory); text-align:center;">
       <div class="container-narrow">
-        <p class="section-label">Vous ne trouvez pas ?</p>
+        <p class="section-label">Vous avez déjà le meuble ?</p>
         <h2 class="section-title">Faites-nous <em>transformer</em><br>votre propre meuble</h2>
-        <p style="font-size:0.95rem; color:var(--brown-text); margin-bottom:2rem; line-height:1.75;">Vous avez un meuble à revaloriser ? Demandez une soumission gratuite et nous le transformerons selon vos goûts.</p>
+        <p style="font-size:0.95rem; color:var(--brown-text); margin-bottom:2rem; line-height:1.75;">Une commode de famille, un buffet trouvé en brocante ? Demandez une soumission gratuite et nous lui redonnerons vie selon vos goûts.</p>
         <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
           <a href="services.html#soumission" class="btn btn-primary">Demander une soumission</a>
           <a href="portfolio.html" class="btn btn-outline">Voir nos réalisations</a>
@@ -319,6 +167,83 @@
 
   </main>
 
+  <!-- FICHE D'UN MEUBLE -->
+  <dialog class="meuble-dialog" id="meubleDialog" aria-labelledby="dlgTitre">
+    <button type="button" class="meuble-dialog-close" id="dlgFermer" aria-label="Fermer la fiche">×</button>
+    <div class="meuble-dialog-grid">
+      <div class="meuble-galerie">
+        <div class="meuble-galerie-main">
+          <img id="dlgImage" alt="" />
+          <span class="meuble-galerie-tag" id="dlgImageTag" hidden>Avant</span>
+        </div>
+        <div class="meuble-galerie-thumbs" id="dlgThumbs"></div>
+      </div>
+      <div class="meuble-infos">
+        <span class="shop-card-status" id="dlgStatut"></span>
+        <h2 class="meuble-titre" id="dlgTitre"></h2>
+        <p class="meuble-prix" id="dlgPrix"></p>
+        <dl class="meuble-caracteristiques" id="dlgCaracteristiques"></dl>
+        <p class="meuble-description" id="dlgDescription"></p>
+
+        <div id="dlgActions"></div>
+
+        <!-- Formulaire de réservation -->
+        <form class="reservation-form" id="reservationForm" novalidate hidden>
+          <h3 class="reservation-titre">Réserver ce meuble</h3>
+          <p class="reservation-note">Aucun paiement maintenant. La pièce vous est réservée <span class="delai-texte">48 h</span>, le temps de payer par virement Interac ou à la cueillette.</p>
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp-field" />
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="resPrenom">Prénom <span class="required">*</span></label>
+              <input type="text" id="resPrenom" name="prenom" class="form-input" autocomplete="given-name" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="resNom">Nom <span class="required">*</span></label>
+              <input type="text" id="resNom" name="nom" class="form-input" autocomplete="family-name" required />
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="resEmail">Courriel <span class="required">*</span></label>
+              <input type="email" id="resEmail" name="email" class="form-input" autocomplete="email" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="resTel">Téléphone <span class="required">*</span></label>
+              <input type="tel" id="resTel" name="telephone" class="form-input" autocomplete="tel" placeholder="514 000-0000" required />
+            </div>
+          </div>
+          <fieldset class="reservation-remise">
+            <legend class="form-label">Remise du meuble</legend>
+            <label class="form-check"><input type="radio" name="remise" value="cueillette" checked /> <span class="form-check-label">Je viens le chercher</span></label>
+            <label class="form-check"><input type="radio" name="remise" value="livraison" /> <span class="form-check-label">J'aimerais une livraison (frais à convenir)</span></label>
+          </fieldset>
+          <div class="form-group">
+            <label class="form-label" for="resMessage">Message (facultatif)</label>
+            <textarea id="resMessage" name="message" class="form-textarea" rows="2" placeholder="Vos disponibilités, une question…"></textarea>
+          </div>
+          <label class="form-check">
+            <input type="checkbox" name="consentement" required />
+            <span class="form-check-label">J'accepte d'être contacté(e) par Atelier Reviva au sujet de cette réservation. <span class="required">*</span></span>
+          </label>
+          <p class="form-alert" id="reservationErreur" role="alert" hidden></p>
+          <button type="submit" class="btn btn-primary reservation-submit" id="reservationSubmit">Réserver ce meuble</button>
+        </form>
+
+        <!-- Confirmation -->
+        <div class="reservation-ok" id="reservationOk" hidden>
+          <div class="form-success-icon">✦</div>
+          <h3>C'est réservé pour vous !</h3>
+          <p class="reservation-ok-ref">Votre référence : <strong id="okNumero"></strong></p>
+          <ul class="reservation-ok-etapes">
+            <li>Virement Interac de <strong id="okPrix"></strong> à <strong id="okInterac"></strong>, avec <strong class="ok-num"></strong> dans le message, d'ici le <strong id="okDate"></strong>.</li>
+            <li>Ou paiement à la cueillette : nous vous écrivons très vite pour convenir du moment.</li>
+          </ul>
+          <p class="reservation-ok-petit">Tous les détails viennent de partir dans votre boîte courriel (vérifiez aussi les indésirables).</p>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
   <!-- FOOTER -->
   <footer class="site-footer" role="contentinfo">
     <div class="footer-inner">
@@ -327,33 +252,13 @@
         <p class="footer-tagline">Redonner vie aux meubles avec élégance, durabilité et savoir-faire artisanal — au Québec.</p>
       </div>
       <div class="footer-links-col"><h4 class="footer-heading">Navigation</h4><ul class="footer-links"><li><a href="index.html">Accueil</a></li><li><a href="services.html">Services</a></li><li><a href="meubles.html">Meubles à vendre</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="formation.html">Formation</a></li><li><a href="apropos.html">À propos</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
-      <div class="footer-links-col"><h4 class="footer-heading">Boutique</h4><ul class="footer-links"><li><a href="meubles.html">Tous les meubles</a></li><li><a href="meubles.html">Commodes</a></li><li><a href="meubles.html">Buffets</a></li><li><a href="meubles.html">Tables</a></li><li><a href="meubles.html">Nouveautés</a></li></ul></div>
-      <div class="footer-links-col"><h4 class="footer-heading">Contact</h4><ul class="footer-links footer-contact"><li>Québec &amp; Rive-Sud</li><li><a href="mailto:info@atelierreviva.ca">info@atelierreviva.ca</a></li><li><a href="tel:+14181234567">418 123-4567</a></li></ul><div class="footer-shopify"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Paiements sécurisés via Shopify pour les meubles à vendre</span></div></div>
+      <div class="footer-links-col"><h4 class="footer-heading">Boutique</h4><ul class="footer-links"><li><a href="meubles.html#boutique">Tous les meubles</a></li><li><a href="meubles.html#commode">Commodes</a></li><li><a href="meubles.html#buffet">Buffets</a></li><li><a href="meubles.html#table">Tables</a></li><li><a href="meubles.html#nouveautes">Être averti des nouveautés</a></li></ul></div>
+      <div class="footer-links-col"><h4 class="footer-heading">Contact</h4><ul class="footer-links footer-contact"><li>Québec &amp; Rive-Sud</li><li><a href="mailto:atelier.reviva.meubles@gmail.com">atelier.reviva.meubles@gmail.com</a></li><li><a href="tel:+15144306221">(514) 430-6221</a></li></ul><div class="footer-shopify"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Meubles réservés en ligne, payés par Interac ou à la cueillette</span></div></div>
     </div>
-    <div class="footer-bottom"><p>© 2025 Atelier Reviva. Tous droits réservés.</p><div class="footer-legal"><a href="#">Politique de confidentialité</a><a href="#">Conditions</a><a href="faq.html">FAQ</a></div></div>
+    <div class="footer-bottom"><p>© 2026 Atelier Reviva. Tous droits réservés.</p><div class="footer-legal"><a href="#">Politique de confidentialité</a><a href="#">Conditions</a><a href="faq.html">FAQ</a></div></div>
   </footer>
 
   <script src="js/main.js"></script>
-  <script>
-    // Filtres boutique
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const products = document.querySelectorAll('.shop-card');
-
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.dataset.filter;
-        products.forEach(p => {
-          if (filter === 'all') {
-            p.style.display = '';
-          } else {
-            const cats = p.dataset.category || '';
-            p.style.display = cats.includes(filter) ? '' : 'none';
-          }
-        });
-      });
-    });
-  </script>
+  <script src="js/boutique.js"></script>
 </body>
 </html>

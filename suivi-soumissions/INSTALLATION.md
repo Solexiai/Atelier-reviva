@@ -28,7 +28,7 @@ Tout se passe dans le compte Google de l'atelier. C'est gratuit, et aucun compte
    - cliquez sur **Autoriser**.
 4. Relancez **Atelier Reviva → Installer / réparer le suivi** une deuxième fois. Le message « Suivi installé » s'affiche en bas à droite.
 
-Vous avez maintenant trois onglets : **Suivi des soumissions**, **Tableau de bord** et **Modèles de relance**. Un dossier Drive **Atelier Reviva — Photos des soumissions** a aussi été créé.
+Vous avez maintenant les onglets **Suivi des soumissions**, **Tableau de bord**, **Modèles de relance**, **Inventaire**, **Réservations** et **Abonnés nouveautés**. Un dossier Drive **Atelier Reviva — Photos des soumissions** a aussi été créé.
 
 ### 4. Mettre le programme en ligne
 1. Revenez dans l'éditeur Apps Script.
@@ -152,6 +152,51 @@ L'appli **Google Sheets** permet de changer un statut en deux touches, et l'appl
 
 ---
 
+## La boutique « Meubles à vendre »
+
+La page **Meubles à vendre** du site se remplit toute seule à partir de l'onglet **Inventaire**. Aucune modification du site n'est nécessaire pour ajouter ou vendre un meuble.
+
+### Ajouter un meuble (2 minutes)
+1. Dans l'onglet **Inventaire**, écrivez le **nom** du meuble sur une nouvelle ligne, par exemple « Commode Sauge ».
+2. En quelques secondes, le **Code** (M-001…), le statut **Brouillon** et un lien **Dossier photos** apparaissent.
+3. Remplissez **Catégorie**, **Prix ($)**, **Dimensions**, **Matériau**, **Finition / style** et une petite **Description**.
+4. Cliquez sur le lien **Dossier photos** et déposez-y les photos, depuis l'ordinateur ou depuis l'appli Google Drive du cellulaire :
+   - les photos s'affichent dans l'ordre de leur nom de fichier, et la première sert de photo principale ;
+   - nommez **avant** la photo du meuble *avant* sa transformation : elle apparaît quand on survole la carte, et dans la fiche avec l'étiquette « Avant ».
+5. Passez le **Statut** à **Disponible**. Le meuble est en ligne.
+
+Tant qu'un meuble est en **Brouillon**, il n'apparaît pas sur le site. Ça permet de tout préparer tranquillement. La colonne **Nb photos** indique combien de photos le site a trouvées.
+
+Les photos déposées dans **Atelier Reviva — Photos boutique (publiques)** sont visibles par tous, puisque ce sont les photos du site. Les photos envoyées par les clients avec leurs soumissions restent, elles, dans un dossier privé.
+
+Un meuble ajouté depuis moins de 30 jours porte l'étiquette **Nouveau**. Les 6 derniers meubles vendus restent visibles en bas de page, avec la mention « Vendu ».
+
+### Quand un client clique sur « Je le veux »
+- Le meuble passe tout seul à **Réservé** sur le site. Personne d'autre ne peut le réserver.
+- Une ligne **R-0001** s'ajoute dans l'onglet **Réservations**.
+- Vous recevez une alerte par courriel. Répondre à ce courriel écrit directement au client.
+- Le client reçoit les consignes : **virement Interac** du prix à l'adresse de l'atelier avec la référence R-0001 dans le message, d'ici 2 jours, **ou paiement à la cueillette**.
+
+Aucun paiement ne passe par le site.
+
+### Suivre une réservation
+Changez simplement le **Statut** dans l'onglet **Réservations** :
+
+| Statut | Ce qui se passe |
+|---|---|
+| Nouvelle réservation | En attente du paiement. La ligne devient orangée quand la date « Payer avant le » est passée, et le client apparaît dans votre courriel du matin. |
+| Paiement reçu | Le virement est arrivé. Le meuble reste « Réservé ». |
+| Remis au client | Le client est reparti avec. Le meuble passe à **Vendu** sur le site. |
+| Annulée | Le meuble est **remis en vente** automatiquement (statut Disponible). |
+
+Pour remettre un meuble en vente à la main, il suffit de passer son statut à **Disponible** dans l'Inventaire.
+
+### Abonnés aux nouveautés
+Les visiteurs qui cliquent sur « M'avertir » arrivent dans l'onglet **Abonnés nouveautés**, avec leur accord. Ils reçoivent un petit courriel de confirmation. Quand une nouvelle pièce est prête, écrivez-leur en copie cachée (Cci) depuis le Gmail de l'atelier. Si quelqu'un répond « désabonner », supprimez sa ligne.
+
+### Mise à jour du site
+Le site se met à jour **dès que vous modifiez l'Inventaire**. Une photo ajoutée dans un dossier Drive peut prendre jusqu'à 10 minutes à apparaître. Pour forcer l'affichage tout de suite : **Atelier Reviva → Mettre à jour la boutique du site maintenant**.
+
 ## Réglages (facultatif)
 
 En haut de `Code.gs`, le bloc `CONFIG` permet de changer :
@@ -159,7 +204,12 @@ En haut de `Code.gs`, le bloc `CONFIG` permet de changer :
 - l'heure du courriel du matin (`HEURE_RESUME`) ;
 - l'envoi ou non de l'accusé de réception au client (`ENVOYER_ACCUSE_CLIENT`) ;
 - l'arrêt de toutes les relances automatiques (`RELANCES_AUTO: false`) ;
-- le lien pour laisser un avis Google (`LIEN_AVIS`), le jour où l'atelier aura une fiche Google. Il apparaît alors dans la demande d'avis.
+- le lien pour laisser un avis Google (`LIEN_AVIS`), le jour où l'atelier aura une fiche Google. Il apparaît alors dans la demande d'avis ;
+- pour la boutique :
+  - le délai pour payer une réservation (`DELAI_RESERVATION_JOURS`, 2 jours par défaut) ;
+  - une autre adresse pour les virements Interac (`COURRIEL_INTERAC`) ;
+  - le lieu de cueillette indiqué au client (`LIEU_CUEILLETTE`) ;
+  - la durée de l'étiquette « Nouveau » (`JOURS_NOUVEAUTE`).
 
 Le bloc `REGLES_STATUT` règle le nombre de jours avant chaque relance.
 
