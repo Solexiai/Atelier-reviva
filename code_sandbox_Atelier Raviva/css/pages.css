@@ -1233,7 +1233,7 @@ button[type="submit"]:disabled {
   overflow: hidden; clip: rect(0 0 0 0);
   white-space: nowrap; border: 0;
 }
-.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.hp-field { display: none !important; }  /* invisible : la saisie automatique de Chrome ne le remplit pas */
 
 .page-hero--compact { padding: 3.2rem var(--space-md) 2.4rem; }
 .page-hero--compact p { margin-left: auto; margin-right: auto; }
