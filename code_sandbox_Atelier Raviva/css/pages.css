@@ -1513,3 +1513,10 @@ button[type="submit"]:disabled {
   .real-vedette-texte { padding: 1.6rem 1.4rem; }
 }
 #rdTags { margin-bottom: 1.2rem; }
+
+/* Formats en hauteur (chiffonniers, armoires) */
+.real-grid { align-items: start; }
+.real-vedette.is-portrait { grid-template-columns: 1fr 1fr; }
+.real-vedette-media, .real-card-media, .real-dialog-media { transition: aspect-ratio var(--dur-fast) var(--ease); }
+.real-dialog-media { max-height: calc(100vh - 9rem); margin: 0 auto; }
+@media (max-width: 1024px) { .real-vedette.is-portrait { grid-template-columns: 1fr; } }

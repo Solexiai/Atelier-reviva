@@ -32,12 +32,29 @@
   /* ── Curseur avant / après ──
      Glisser au doigt ou à la souris (le défilement vertical reste possible sur cellulaire),
      ou flèches du clavier grâce au curseur caché. */
+  /* Le cadre prend le format de la photo (en hauteur pour un chiffonnier, en largeur pour un buffet) */
+  function adapterFormat(bloc, img) {
+    const appliquer = () => {
+      if (!img.naturalWidth) return;
+      const ratio = Math.max(0.75, Math.min(1.78, img.naturalWidth / img.naturalHeight));
+      const cadre = bloc.parentElement;
+      if (!cadre) return;
+      cadre.style.aspectRatio = String(ratio);
+      const vedette = cadre.closest('.real-vedette');
+      if (vedette) vedette.classList.toggle('is-portrait', ratio < 1);
+    };
+    if (img.complete) requestAnimationFrame(appliquer); else img.addEventListener('load', appliquer, { once: true });
+  }
+
   function curseur(p, taille, nom) {
     const apres = p.photos && p.photos[0];
     const src = photo => photo ? (taille === 'grand' ? photo.url : photo.mini) : '';
     if (!p.avant || !apres) {
       const seule = apres || p.avant;
-      return el('div', { class: 'ba-slider ba-slider--seule' }, [el('img', { src: src(seule), alt: nom || p.nom, loading: 'lazy' })]);
+      const img = el('img', { src: src(seule), alt: nom || p.nom, loading: 'lazy' });
+      const bloc = el('div', { class: 'ba-slider ba-slider--seule' }, [img]);
+      adapterFormat(bloc, img);
+      return bloc;
     }
     const bloc = el('div', { class: 'ba-slider', style: '--pos:50%' });
     const range = el('input', { type: 'range', min: '0', max: '100', value: '50', step: '1', class: 'ba-range', 'aria-label': 'Comparer avant et après : ' + p.nom });
@@ -72,6 +89,7 @@
     bloc.addEventListener('pointerup', fin);
     bloc.addEventListener('pointercancel', fin);
     bloc.addEventListener('click', e => e.stopPropagation());
+    adapterFormat(bloc, bloc.querySelector('.ba-img-avant'));
     return bloc;
   }
 
