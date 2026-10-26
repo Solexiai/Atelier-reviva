@@ -28,7 +28,7 @@ Tout se passe dans le compte Google de l'atelier. C'est gratuit, et aucun compte
    - cliquez sur **Autoriser**.
 4. Relancez **Atelier Reviva → Installer / réparer le suivi** une deuxième fois. Le message « Suivi installé » s'affiche en bas à droite.
 
-Vous avez maintenant les onglets **Suivi des soumissions**, **Tableau de bord**, **Modèles de relance**, **Inventaire**, **Réservations** et **Abonnés nouveautés**. Un dossier Drive **Atelier Reviva — Photos des soumissions** a aussi été créé.
+Vous avez maintenant les onglets **Suivi des soumissions**, **Tableau de bord**, **Modèles de relance**, **Inventaire**, **Réservations**, **Abonnés nouveautés** et **Réalisations**. Un dossier Drive **Atelier Reviva — Photos des soumissions** a aussi été créé.
 
 ### 4. Mettre le programme en ligne
 1. Revenez dans l'éditeur Apps Script.
@@ -195,7 +195,26 @@ Pour remettre un meuble en vente à la main, il suffit de passer son statut à *
 Les visiteurs qui cliquent sur « M'avertir » arrivent dans l'onglet **Abonnés nouveautés**, avec leur accord. Ils reçoivent un petit courriel de confirmation. Quand une nouvelle pièce est prête, écrivez-leur en copie cachée (Cci) depuis le Gmail de l'atelier. Si quelqu'un répond « désabonner », supprimez sa ligne.
 
 ### Mise à jour du site
-Le site se met à jour **dès que vous modifiez l'Inventaire**. Une photo ajoutée dans un dossier Drive peut prendre jusqu'à 10 minutes à apparaître. Pour forcer l'affichage tout de suite : **Atelier Reviva → Mettre à jour la boutique du site maintenant**.
+Le site se met à jour **dès que vous modifiez l'Inventaire**. Une photo ajoutée dans un dossier Drive peut prendre jusqu'à 10 minutes à apparaître. Pour forcer l'affichage tout de suite : **Atelier Reviva → Mettre à jour le site maintenant**.
+
+## Les réalisations (page Portfolio)
+
+La page **Portfolio** montre les transformations avec un curseur **avant / après** que les visiteurs font glisser. Elle se remplit toute seule à partir de l'onglet **Réalisations**.
+
+### Ajouter une réalisation
+1. Dans l'onglet **Réalisations**, écrivez le **nom** du projet, par exemple « Commode Haussmann Terracotta ». Le **Code** (P-001…), le statut **Brouillon** et un lien **Dossier photos** apparaissent tout seuls.
+2. Remplissez **Type de meuble**, **Service** et une courte **Description** : état de départ, travail fait, finition choisie.
+3. Dans le dossier photos, déposez :
+   - la photo **avant**, nommée « avant » ;
+   - une ou plusieurs photos **après**. La première, par ordre de nom de fichier, est comparée à la photo avant dans le curseur. Les autres apparaissent en vignettes dans la fiche du projet.
+4. Passez le **Statut** à **Publié**.
+
+**Astuce photo :** prenez l'avant et l'après **du même angle et à la même distance**. Le curseur n'en sera que plus spectaculaire.
+
+### Le projet à la une
+Mettez **Oui** dans la colonne **Vedette** du projet à afficher en grand en haut de la page. Sans vedette, c'est le projet le plus récent qui a une photo avant. Le projet à la une n'apparaît que lorsqu'au moins 2 projets sont publiés.
+
+Un projet en **Brouillon**, ou publié sans aucune photo, n'apparaît pas sur le site. La colonne **Nb photos** indique combien de photos ont été trouvées.
 
 ## Réglages (facultatif)
 

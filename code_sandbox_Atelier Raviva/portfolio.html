@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portfolio – Atelier Reviva | Transformations de meubles Québec</title>
-  <meta name="description" content="Explorez les transformations de meubles réalisées par Atelier Reviva. Projets avant/après : commodes, buffets, tables, mobilier vintage revalorisé au Québec." />
+  <meta name="description" content="Avant / après : les transformations de meubles réalisées par Atelier Reviva. Commodes, buffets, tables et mobilier ancien revalorisés à la main." />
   <link rel="canonical" href="https://atelierreviva.ca/portfolio.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -67,37 +67,52 @@
 
   <main>
 
-    <!-- HERO PAGE -->
-    <section class="page-hero">
+    <!-- EN-TÊTE COMPACT -->
+    <section class="page-hero page-hero--compact">
       <nav class="breadcrumb" aria-label="Fil d'Ariane">
         <a href="index.html">Accueil</a><span>/</span><span>Portfolio</span>
       </nav>
       <span class="page-hero-eyebrow">Réalisations</span>
       <h1>L'art de la <em>transformation</em></h1>
-      <p>Explorez les transformations de meubles réalisées par Atelier Reviva. Chaque projet met en lumière le potentiel du mobilier ancien grâce à une approche esthétique, artisanale et durable.</p>
+      <p>Avant, après : glissez le curseur sur chaque photo pour voir le chemin parcouru par ces meubles, de l'oubli à une deuxième vie.</p>
+      <p class="shop-count" id="realCount" aria-live="polite"></p>
     </section>
 
-    <!-- FILTRES -->
-    <section style="background:var(--ivory); padding:3rem var(--space-md) 0;">
+    <section class="real-section">
       <div class="container">
-        <div class="filter-bar" role="group" aria-label="Filtrer les projets">
-          <button class="filter-btn active" data-filter="all">Tous les projets</button>
-          <button class="filter-btn" data-filter="commode">Commodes</button>
-          <button class="filter-btn" data-filter="buffet">Buffets</button>
-          <button class="filter-btn" data-filter="table">Tables</button>
-          <button class="filter-btn" data-filter="peinture">Peinture</button>
-          <button class="filter-btn" data-filter="bois">Bois naturel</button>
-          <button class="filter-btn" data-filter="vintage">Mobilier vintage</button>
-          <button class="filter-btn" data-filter="complet">Transformation complète</button>
+
+        <!-- Projet à la une -->
+        <article class="real-vedette" id="realVedette" hidden>
+          <div class="real-vedette-media" id="realVedetteMedia"></div>
+          <div class="real-vedette-texte">
+            <p class="section-label">Projet à la une</p>
+            <h2 class="real-vedette-titre" id="realVedetteTitre"></h2>
+            <p class="real-tags" id="realVedetteTags"></p>
+            <p class="real-vedette-desc" id="realVedetteDesc"></p>
+            <button type="button" class="btn btn-outline" id="realVedetteBtn">Voir le projet</button>
+          </div>
+        </article>
+
+        <!-- Aucune réalisation publiée -->
+        <div class="shop-empty" id="realEmpty" hidden>
+          <div class="shop-empty-mark" aria-hidden="true">✦</div>
+          <h2 class="shop-empty-title">Premières réalisations <em>bientôt en ligne</em></h2>
+          <p class="shop-empty-text">Nous rassemblons les photos avant et après de nos plus belles transformations. En attendant, parlez-nous du meuble qui mérite une deuxième vie.</p>
+          <a href="services.html#soumission" class="btn btn-primary">Demander une soumission</a>
         </div>
-      </div>
-    </section>
 
-    <!-- GRILLE PORTFOLIO — chargée dynamiquement par portfolio-loader.js -->
-    <section class="section-pad" style="background:var(--ivory); padding-top:2rem;">
-      <div class="container">
-        <div class="portfolio-full-grid" id="portfolio-grid" aria-live="polite" aria-label="Projets de revalorisation">
-          <!-- Les cartes sont injectées ici par assets/js/portfolio-loader.js -->
+        <!-- Erreur de chargement -->
+        <div class="shop-empty shop-error" id="realError" hidden>
+          <h2 class="shop-empty-title">Les réalisations se font attendre…</h2>
+          <p class="shop-empty-text">Impossible de les afficher pour le moment. Réessayez dans quelques instants.</p>
+          <button type="button" class="btn btn-outline" id="realRetry">Réessayer</button>
+        </div>
+
+        <!-- Grille des réalisations (remplie depuis l'onglet « Réalisations » du Google Sheets) -->
+        <div class="real-grid" id="realGrid" aria-live="polite" aria-busy="true">
+          <div class="real-card shop-card--skeleton" aria-hidden="true"><div class="shop-card-img"></div><div class="shop-card-body"><span></span><span></span></div></div>
+          <div class="real-card shop-card--skeleton" aria-hidden="true"><div class="shop-card-img"></div><div class="shop-card-body"><span></span><span></span></div></div>
+          <div class="real-card shop-card--skeleton" aria-hidden="true"><div class="shop-card-img"></div><div class="shop-card-body"><span></span><span></span></div></div>
         </div>
       </div>
     </section>
@@ -107,15 +122,34 @@
       <div class="container-narrow">
         <p class="section-label">Votre meuble pourrait être ici</p>
         <h2 class="section-title">Vous avez un meuble<br>à <em>transformer</em> ?</h2>
-        <p style="font-size:0.95rem; color:var(--brown-text); margin-bottom:2rem; line-height:1.75;">Contactez-nous pour discuter de votre projet. Chaque transformation commence par une conversation simple et une soumission gratuite.</p>
+        <p style="font-size:0.95rem; color:var(--brown-text); margin-bottom:2rem; line-height:1.75;">Chaque transformation commence par une conversation simple et une soumission gratuite, sans engagement.</p>
         <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
           <a href="services.html#soumission" class="btn btn-primary">Demander une soumission</a>
-          <a href="contact.html" class="btn btn-outline">Nous contacter</a>
+          <a href="meubles.html" class="btn btn-outline">Voir les meubles à vendre</a>
         </div>
       </div>
     </section>
 
   </main>
+
+  <!-- FICHE D'UNE RÉALISATION -->
+  <dialog class="meuble-dialog" id="realDialog" aria-labelledby="rdTitre">
+    <button type="button" class="meuble-dialog-close" id="rdFermer" aria-label="Fermer la fiche">×</button>
+    <div class="meuble-dialog-grid">
+      <div class="meuble-galerie">
+        <div class="real-dialog-media" id="rdMedia"></div>
+        <div class="meuble-galerie-thumbs" id="rdThumbs"></div>
+      </div>
+      <div class="meuble-infos">
+        <p class="section-label" style="margin-bottom:0.6rem;">Réalisation</p>
+        <h2 class="meuble-titre" id="rdTitre"></h2>
+        <p class="real-tags" id="rdTags"></p>
+        <p class="meuble-description" id="rdDescription"></p>
+        <a href="services.html#soumission" class="btn btn-primary meuble-cta">Je veux le même pour mon meuble</a>
+        <p class="meuble-cta-note">Soumission gratuite et sans engagement, réponse en 48 h ouvrables</p>
+      </div>
+    </div>
+  </dialog>
 
   <!-- FOOTER -->
   <footer class="site-footer" role="contentinfo">
@@ -174,18 +208,18 @@
         <h4 class="footer-heading">Contact</h4>
         <ul class="footer-links footer-contact">
           <li>Québec &amp; Rive-Sud</li>
-          <li><a href="mailto:info@atelierreviva.ca">info@atelierreviva.ca</a></li>
-          <li><a href="tel:+14181234567">418 123-4567</a></li>
+          <li><a href="mailto:atelier.reviva.meubles@gmail.com">atelier.reviva.meubles@gmail.com</a></li>
+          <li><a href="tel:+15144306221">(514) 430-6221</a></li>
           <li><a href="contact.html">Formulaire de contact</a></li>
         </ul>
         <div class="footer-shopify" role="note">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          <span>Paiements sécurisés via Shopify pour les meubles à vendre</span>
+          <span>Meubles réservés en ligne, payés par Interac ou à la cueillette</span>
         </div>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 Atelier Reviva. Tous droits réservés.</p>
+      <p>© 2026 Atelier Reviva. Tous droits réservés.</p>
       <div class="footer-legal">
         <a href="confidentialite.html">Politique de confidentialité</a>
         <a href="conditions.html">Conditions d'utilisation</a>
@@ -195,6 +229,6 @@
   </footer>
 
   <script src="js/main.js"></script>
-  <script src="assets/js/portfolio-loader.js"></script>
+  <script src="js/realisations.js"></script>
 </body>
 </html>

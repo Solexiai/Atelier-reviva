@@ -1423,3 +1423,93 @@ button[type="submit"]:disabled {
   .meuble-galerie { padding: 0.8rem; }
 }
 .reservation-ok-etapes .ok-num { white-space: nowrap; }
+
+/* ═══════════════════════════════════════════════════════════
+   RÉALISATIONS — page Portfolio (avant / après)
+   ═══════════════════════════════════════════════════════════ */
+.real-section { background: var(--ivory); padding: 2.5rem var(--space-md) var(--space-xl); }
+
+/* Curseur avant / après */
+.ba-slider {
+  --pos: 50%;
+  position: relative; width: 100%; height: 100%;
+  overflow: hidden; background: var(--sand-light);
+  touch-action: pan-y; user-select: none; -webkit-user-select: none;
+  cursor: ew-resize;
+}
+.ba-slider--seule { cursor: default; }
+.ba-slider img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.ba-img-apres { clip-path: inset(0 0 0 var(--pos)); }
+.ba-tag {
+  position: absolute; top: 0.9rem; z-index: 2;
+  font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 0.3rem 0.8rem; border-radius: 100px; pointer-events: none;
+}
+.ba-tag--avant { left: 0.9rem; background: rgba(61, 46, 37, 0.72); color: var(--white); }
+.ba-tag--apres { right: 0.9rem; background: var(--terracotta); color: var(--white); }
+.ba-handle {
+  position: absolute; top: 0; bottom: 0; left: var(--pos); z-index: 2;
+  width: 2px; margin-left: -1px; background: var(--white);
+  box-shadow: 0 0 0 1px rgba(61, 46, 37, 0.12); pointer-events: none;
+}
+.ba-handle-rond {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--white); color: var(--terracotta);
+  font-size: 0.95rem; letter-spacing: 0.1em; font-weight: 500;
+  box-shadow: var(--shadow-md); transition: transform var(--dur-fast) var(--ease);
+}
+.ba-slider:hover .ba-handle-rond, .ba-slider.is-dragging .ba-handle-rond { transform: translate(-50%, -50%) scale(1.08); }
+.ba-range {
+  position: absolute; inset: auto 0 0 0; width: 100%; height: 1px;
+  opacity: 0; pointer-events: none; margin: 0;
+}
+.ba-slider:has(.ba-range:focus-visible) { outline: 2px solid var(--terracotta); outline-offset: 3px; }
+
+/* Projet à la une */
+.real-vedette {
+  display: grid; grid-template-columns: 1.6fr 1fr; gap: 0; align-items: stretch;
+  background: var(--white); border: 1px solid var(--sand-light); border-radius: var(--radius-lg);
+  overflow: hidden; margin-bottom: 3rem; box-shadow: var(--shadow-sm);
+}
+.real-vedette[hidden] { display: none; }
+.real-vedette-media { aspect-ratio: 4 / 3; min-height: 100%; }
+.real-vedette-texte { padding: 2.6rem 2.4rem; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+.real-vedette-titre { font-family: var(--font-serif); font-weight: 400; font-size: clamp(1.7rem, 3vw, 2.4rem); line-height: 1.15; margin-bottom: 0.5rem; color: var(--text-main); }
+.real-vedette-desc { font-size: 0.9rem; color: var(--brown-text); line-height: 1.75; margin: 0.8rem 0 1.6rem; white-space: pre-line; }
+.real-tags { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+
+/* Grille */
+.real-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); }
+.real-card { background: var(--white); border: 1px solid var(--sand-light); border-radius: var(--radius-md); overflow: hidden; transition: box-shadow var(--dur-med) var(--ease); }
+.real-card:hover { box-shadow: var(--shadow-md); }
+.real-card-media { aspect-ratio: 4 / 3; }
+.real-card.shop-card--skeleton .shop-card-img { aspect-ratio: 4 / 3; height: auto; }
+.real-card-body { padding: 1.2rem 1.4rem 1.4rem; }
+.real-card-titre { font-family: var(--font-serif); font-weight: 500; font-size: 1.2rem; margin-bottom: 0.3rem; }
+.real-card-titre a { color: var(--text-main); }
+.real-card-titre a:hover { color: var(--terracotta); }
+.real-card-lien {
+  margin-top: 0.9rem; padding: 0; background: none; border: none; cursor: pointer;
+  font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--terracotta);
+}
+.real-card-lien::after { content: ' →'; }
+.real-card-lien:hover { color: var(--terra-dark); }
+
+/* Fiche */
+.real-dialog-media { aspect-ratio: 4 / 3; border-radius: var(--radius-md); overflow: hidden; }
+.real-dialog-media .ba-slider--seule img { object-fit: contain; background: var(--white); }
+#realDialog .meuble-galerie-thumbs span { font-size: 0.5rem; }
+#realDialog .meuble-galerie { display: flex; flex-direction: column; justify-content: center; }
+
+@media (max-width: 1024px) {
+  .real-grid { grid-template-columns: repeat(2, 1fr); }
+  .real-vedette { grid-template-columns: 1fr; }
+  .real-vedette-media { min-height: 0; }
+}
+@media (max-width: 640px) {
+  .real-grid { grid-template-columns: 1fr; }
+  .real-vedette-texte { padding: 1.6rem 1.4rem; }
+}
+#rdTags { margin-bottom: 1.2rem; }

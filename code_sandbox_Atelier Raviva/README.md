@@ -7,8 +7,8 @@
 | `index.html`        | Accueil                      | ✅ Complet |
 | `apropos.html`      | À propos                     | ✅ Complet |
 | `services.html`     | Services + Formulaire soumission | ✅ Complet |
-| `meubles.html`      | Meubles à vendre (Shopify)   | ✅ Complet |
-| `portfolio.html`    | Portfolio 20 projets         | ✅ Complet |
+| `meubles.html`      | Meubles à vendre (inventaire Google Sheets, réservation + Interac) | ✅ Complet |
+| `portfolio.html`    | Réalisations avant / après (onglet Réalisations du Google Sheets) | ✅ Complet |
 | `formation.html`    | Formation + Calendrier + Liste d'attente | ✅ Complet |
 | `temoignages.html`  | Témoignages (12 avis)        | ✅ Complet |
 | `faq.html`          | FAQ (accordéon, schema)      | ✅ Complet |
@@ -25,6 +25,8 @@
 | Fichier          | Rôle                                         |
 |------------------|----------------------------------------------|
 | `js/main.js`     | Header scroll, menu hamburger, fade-in, nav active |
+| `js/boutique.js` | Page Meubles : inventaire, fiche, réservation, abonnement |
+| `js/realisations.js` | Page Portfolio : curseur avant / après, fiche projet |
 
 ## Fonctionnalités clés
 
@@ -40,19 +42,9 @@
 - FAQ Services en accordéon
 - Lien depuis l'icône "Demander une soumission" de toutes les pages
 
-### Page Meubles à vendre (meubles.html)
-- **Prête pour Shopify** : boutons "Acheter via Shopify" avec ancres `#shopify-url-*`
-- Bandeau de confiance (paiement sécurisé, cartes acceptées, confirmation rapide)
-- Explication du processus Shopify
-- Filtres : tout, commodes, buffets, tables, chevets, chaises, appoint, nouveautés
-- 6 meubles + 3 emplacements "Bientôt disponible"
-- Guide d'achat en 3 étapes
-
-### Page Portfolio (portfolio.html)
-- **20 emplacements projets** : 6 avec photos réelles, 14 prêts à recevoir vos photos
-- Filtres : commode, buffet, table, peinture, bois, vintage, transformation complète
-- Overlay hover avec bouton "Voir le projet"
-- Tags par projet
+### Pages Meubles à vendre et Portfolio
+Gérées sans toucher au code, depuis le Google Sheets de l'atelier (onglets **Inventaire** et **Réalisations**).
+Voir `suivi-soumissions/INSTALLATION.md`.
 
 ### Page Formation (formation.html)
 - 5 modules avec images
@@ -61,11 +53,10 @@
 - FAQ accordéon
 
 ## À remplacer avant la mise en ligne
-1. `#shopify-url-*` → URLs produits Shopify réels
 2. Coordonnées : téléphone, courriel, adresse
 3. Liens Instagram / Facebook
 4. Photos d'atelier réelles (remplacer Unsplash)
-5. Projets portfolio 7–20 : ajouter vos photos dans les emplacements vides
+5. Meubles et réalisations : à ajouter dans le Google Sheets de l'atelier
 
 ## Structure responsive
 - Desktop : header 3 colonnes, grilles 3–4 colonnes

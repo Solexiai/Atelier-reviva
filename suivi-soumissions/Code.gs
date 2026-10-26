@@ -18,6 +18,9 @@
  *    - bouton « Je le veux » → onglet « Réservations », meuble réservé, paiement Interac
  *    - inscriptions « Être averti des nouveautés » → onglet « Abonnés nouveautés »
  *
+ *  RÉALISATIONS (page « Portfolio » du site) :
+ *    - onglet « Réalisations » : un projet par ligne, photos avant / après dans un dossier Drive
+ *
  *  Quand on change le Statut d'une ligne, les dates de suivi
  *  se remplissent toutes seules (voir REGLES_STATUT plus bas).
  *
@@ -54,6 +57,10 @@ const CONFIG = {
   LIEU_CUEILLETTE: '',                     // ex. « à l'atelier, à Longueuil » — vide = adresse donnée par courriel
   JOURS_NOUVEAUTE: 30,                     // un meuble ajouté depuis moins de X jours porte l'étiquette « Nouveau »
   MAX_VENDUS_AFFICHES: 6,                  // nombre de meubles vendus montrés sur le site (les plus récents)
+
+  /* Réalisations (Portfolio) */
+  ONGLET_REALISATIONS: 'Réalisations',
+  DOSSIER_REALISATIONS: 'Atelier Reviva — Photos réalisations (publiques)',
 };
 
 /* Statuts proposés dans la liste déroulante, dans l'ordre du parcours client */
@@ -123,7 +130,7 @@ function onOpen() {
     .addItem('Installer / réparer le suivi', 'installer')
     .addItem('Lancer les relances du jour maintenant', 'envoyerRelancesDuJour')
     .addSeparator()
-    .addItem('Mettre à jour la boutique du site maintenant', 'mettreAJourBoutique')
+    .addItem('Mettre à jour le site maintenant (boutique et réalisations)', 'mettreAJourBoutique')
     .addToUi();
 }
 
@@ -175,6 +182,9 @@ function installer() {
 
   /* Boutique : inventaire, réservations, abonnés, dossier de photos publiques */
   installerBoutique_(ss, props);
+
+  /* Réalisations (page Portfolio) */
+  installerRealisations_(ss, props);
 
   /* Dossier Drive des photos */
   if (!props.getProperty('DOSSIER_ID') || !dossierExiste_(props.getProperty('DOSSIER_ID'))) {
@@ -288,6 +298,14 @@ function doPost(e) {
 
 /* Petite page si quelqu'un ouvre l'adresse du programme dans un navigateur */
 function doGet(e) {
+  if (e && e.parameter && e.parameter.action === 'realisations') {
+    try {
+      return reponse_(lireRealisationsPublic_());
+    } catch (err) {
+      console.error('Réalisations : ' + (err && err.stack || err));
+      return reponse_({ ok: false, erreur: 'Réalisations indisponibles' });
+    }
+  }
   if (e && e.parameter && e.parameter.action === 'inventaire') {
     try {
       return reponse_(lireInventairePublic_());
@@ -308,6 +326,7 @@ function quandOnModifie(e) {
   const sheet = e.range.getSheet();
   if (sheet.getName() === CONFIG.ONGLET_INVENTAIRE) return quandInventaireModifie_(e);
   if (sheet.getName() === CONFIG.ONGLET_RESERVATIONS) return quandReservationModifiee_(e);
+  if (sheet.getName() === CONFIG.ONGLET_REALISATIONS) return quandRealisationModifiee_(e);
   if (sheet.getName() !== CONFIG.ONGLET_SUIVI) return;
 
   const col = indexColonnes_(sheet);
@@ -952,10 +971,12 @@ function preparerOnglet_(ss, nom, colonnes) {
 
 function mettreAJourBoutique() {
   viderCacheBoutique_();
+  viderCacheRealisations_();
   const resultat = lireInventairePublic_();
   const nb = resultat.meubles.filter(m => m.statut !== 'Vendu').length;
+  const nbProjets = lireRealisationsPublic_().projets.length;
   try {
-    SpreadsheetApp.getActiveSpreadsheet().toast('Boutique à jour : ' + nb + ' meuble(s) en vente ou réservé(s) sur le site.', CONFIG.NOM_ATELIER, 8);
+    SpreadsheetApp.getActiveSpreadsheet().toast('Site à jour : ' + nb + ' meuble(s) en vente ou réservé(s), ' + nbProjets + ' réalisation(s) publiée(s).', CONFIG.NOM_ATELIER, 8);
   } catch (e) { /* lancé hors du Sheets */ }
 }
 
@@ -1344,6 +1365,121 @@ function traiterAbonnement_(payload) {
     console.error('Confirmation abonnement : ' + err);
   }
   return { ok: true };
+}
+
+
+/* ═══════════════════════════════════════════════
+   RÉALISATIONS — page « Portfolio » du site
+═══════════════════════════════════════════════ */
+const COLONNES_REALISATIONS = ['Code', 'Statut', 'Nom', 'Type de meuble', 'Service', 'Description', 'Vedette', 'Dossier photos', 'Nb photos', 'Ajouté le'];
+const STATUTS_REALISATION = ['Brouillon', 'Publié'];
+const SERVICES_REALISATION = ['Revalorisation complète', 'Peinture et finition', 'Restauration esthétique', 'Conseils personnalisés'];
+const CLE_CACHE_REALISATIONS = 'realisations_public_v1';
+
+function installerRealisations_(ss, props) {
+  const sheet = preparerOnglet_(ss, CONFIG.ONGLET_REALISATIONS, COLONNES_REALISATIONS);
+  const c = indexColonnes_(sheet);
+  const lignes = Math.max(sheet.getMaxRows(), 500) - 1;
+  const corps = t => sheet.getRange(2, c[t] + 1, lignes, 1);
+  corps('Statut').setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(STATUTS_REALISATION, true).setAllowInvalid(false)
+    .setHelpText('Brouillon = pas encore sur le site. Publié = visible dans le Portfolio.').build());
+  corps('Type de meuble').setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(CATEGORIES_MEUBLES, true).setAllowInvalid(true).build());
+  corps('Service').setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(SERVICES_REALISATION, true).setAllowInvalid(true).build());
+  corps('Vedette').setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(['Oui', 'Non'], true).setAllowInvalid(false)
+    .setHelpText('Oui = projet affiché en grand en haut du Portfolio. Sans vedette, le plus récent est mis en avant.').build());
+  corps('Ajouté le').setNumberFormat('yyyy-mm-dd');
+  sheet.setColumnWidth(c['Nom'] + 1, 220);
+  sheet.setColumnWidth(c['Description'] + 1, 340);
+  sheet.setColumnWidth(c['Dossier photos'] + 1, 160);
+  sheet.getRange(1, c['Nom'] + 1).setNote('Pour ajouter une réalisation : écrivez son nom ici. Le code et le dossier photos apparaissent tout seuls. ' +
+    'Déposez la photo d\'avant (nommez-la « avant ») et les photos d\'après, puis passez le Statut à Publié.');
+  const S = '$' + columnToLetter_(c['Statut'] + 1) + '2';
+  sheet.setConditionalFormatRules([SpreadsheetApp.newConditionalFormatRule().whenFormulaSatisfied(formule_('=' + S + '="Publié"'))
+    .setBackground('#E3EFDD').setRanges([sheet.getRange(2, 1, lignes, sheet.getLastColumn())]).build()]);
+
+  if (!props.getProperty('DOSSIER_REALISATIONS_ID') || !dossierExiste_(props.getProperty('DOSSIER_REALISATIONS_ID'))) {
+    const dossiers = DriveApp.getFoldersByName(CONFIG.DOSSIER_REALISATIONS);
+    const dossier = dossiers.hasNext() ? dossiers.next() : DriveApp.createFolder(CONFIG.DOSSIER_REALISATIONS);
+    props.setProperty('DOSSIER_REALISATIONS_ID', dossier.getId());
+  }
+  try {
+    DriveApp.getFolderById(props.getProperty('DOSSIER_REALISATIONS_ID')).setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (err) {
+    console.warn('Partage du dossier réalisations : ' + err);
+  }
+  viderCacheRealisations_();
+}
+
+function viderCacheRealisations_() {
+  try { CacheService.getScriptCache().remove(CLE_CACHE_REALISATIONS); } catch (e) { /* rien */ }
+}
+
+function quandRealisationModifiee_(e) {
+  const sheet = e.range.getSheet();
+  const c = indexColonnes_(sheet);
+  const props = PropertiesService.getScriptProperties();
+  for (let r = Math.max(2, e.range.getRow()); r < e.range.getRow() + e.range.getNumRows(); r++) {
+    const cellule = t => sheet.getRange(r, c[t] + 1);
+    const nom = texte_(cellule('Nom').getValue());
+    if (!nom || texte_(cellule('Code').getValue())) continue;
+    const lock = LockService.getScriptLock();
+    lock.waitLock(20000);
+    try {
+      const code = 'P-' + String(Number(props.getProperty('COMPTEUR_PROJETS') || 0) + 1).padStart(3, '0');
+      props.setProperty('COMPTEUR_PROJETS', code.slice(2));
+      cellule('Code').setValue(code);
+      if (!texte_(cellule('Statut').getValue())) cellule('Statut').setValue('Brouillon');
+      cellule('Ajouté le').setValue(debutJournee_(new Date()));
+      const parent = DriveApp.getFolderById(props.getProperty('DOSSIER_REALISATIONS_ID'));
+      cellule('Dossier photos').setValue(parent.createFolder(code + ' — ' + nom.replace(/[\\/:*?"<>|]/g, '_')).getUrl());
+    } finally {
+      lock.releaseLock();
+    }
+  }
+  viderCacheRealisations_();
+}
+
+/* Ce que la page Portfolio affiche */
+function lireRealisationsPublic_() {
+  const cache = CacheService.getScriptCache();
+  const enCache = cache.get(CLE_CACHE_REALISATIONS);
+  if (enCache) return JSON.parse(enCache);
+
+  const props = PropertiesService.getScriptProperties();
+  const ss = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID'));
+  const sheet = ss.getSheetByName(CONFIG.ONGLET_REALISATIONS);
+  const resultat = { ok: true, projets: [], maj: new Date().toISOString() };
+
+  if (sheet && sheet.getLastRow() >= 2) {
+    const c = indexColonnes_(sheet);
+    const donnees = sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn()).getValues();
+    donnees.forEach((d, i) => {
+      if (texte_(d[c['Statut']]) !== 'Publié' || !texte_(d[c['Nom']])) return;
+      const photos = photosDuDossier_(texte_(d[c['Dossier photos']]));
+      if (c['Nb photos'] !== undefined) sheet.getRange(i + 2, c['Nb photos'] + 1).setValue(photos.apres.length + (photos.avant ? 1 : 0));
+      if (!photos.apres.length && !photos.avant) return; // rien à montrer
+      const ajoute = d[c['Ajouté le']];
+      resultat.projets.push({
+        code: texte_(d[c['Code']]),
+        nom: texte_(d[c['Nom']]),
+        meuble: texte_(d[c['Type de meuble']]),
+        service: texte_(d[c['Service']]),
+        description: texte_(d[c['Description']]),
+        vedette: texte_(d[c['Vedette']]).toLowerCase() === 'oui',
+        avant: photos.avant,
+        photos: photos.apres,
+        _tri: ajoute instanceof Date ? ajoute.getTime() : 0,
+        _ligne: i,
+      });
+    });
+    // Plus récents d'abord (à date égale, la ligne la plus basse du tableau)
+    resultat.projets.sort((a, b) => (b._tri - a._tri) || (b._ligne - a._ligne));
+    resultat.projets.forEach(p => { delete p._tri; delete p._ligne; });
+  }
+
+  const json = JSON.stringify(resultat);
+  if (json.length < 95000) cache.put(CLE_CACHE_REALISATIONS, json, 600);
+  return resultat;
 }
 
 
