@@ -1579,3 +1579,37 @@ button[type="submit"]:disabled {
 .legal-text p, .legal-text li { font-size: 0.92rem; color: var(--brown-text); line-height: 1.8; }
 .legal-text ul { padding-left: 1.2rem; margin: 0.4rem 0 0.8rem; }
 .legal-text a { color: var(--terracotta); }
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE CONTACT (refonte)
+   ═══════════════════════════════════════════════════════════ */
+.contact-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; margin-top: 1.6rem; position: relative; }
+.contact-form-card { background: var(--white); border: 1px solid var(--sand-light); border-radius: var(--radius-lg); padding: 2.6rem; box-shadow: var(--shadow-sm); }
+.contact-form-title { font-family: var(--font-serif); font-weight: 400; font-size: 1.6rem; margin-bottom: 1.4rem; color: var(--text-main); }
+.contact-form-card .form-grid-2 { margin-bottom: 1.1rem; }
+.contact-form-card .form-group { margin-bottom: 0; }
+.contact-form-card textarea { margin-bottom: 1.1rem; }
+.contact-form-card .form-check { margin: 0.2rem 0 1.2rem; }
+.contact-form-card form[hidden] { display: none; }
+.contact-hint { font-size: 0.82rem; color: var(--brown-text); background: rgba(196,123,90,0.06); border: 1px solid rgba(196,123,90,0.18); border-radius: var(--radius-sm); padding: 0.7rem 0.9rem; margin: 0 0 1.1rem; }
+.contact-hint[hidden] { display: none; }
+.contact-hint a, .contact-form-card .form-check-label a { color: var(--terracotta); }
+.contact-submit { width: 100%; padding: 1rem; }
+.contact-coord { list-style: none; padding: 0; margin: 0 0 1.6rem; display: grid; gap: 1rem; }
+.contact-coord li { display: grid; gap: 0.15rem; font-size: 0.9rem; color: var(--text-main); }
+.contact-coord a { color: var(--terracotta); word-break: break-word; }
+.contact-coord-label { display: block; font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); }
+.contact-heures { border-top: 1px solid var(--sand); padding-top: 1.3rem; margin-bottom: 1.4rem; }
+.contact-heures-tete { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.7rem; flex-wrap: wrap; }
+.contact-statut { font-size: 0.7rem; padding: 0.2rem 0.65rem; border-radius: 100px; }
+.contact-statut.is-ouvert { background: #E3EFDD; color: #4F6B45; }
+.contact-statut.is-ferme { background: var(--sand-light); color: var(--text-muted); }
+#contactHeures { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.3rem; }
+#contactHeures li { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--brown-text); padding: 0.15rem 0; }
+#contactHeures li.is-aujourdhui { color: var(--text-main); font-weight: 500; }
+.contact-note { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.7rem; }
+.contact-zones { font-size: 0.84rem; color: var(--brown-text); line-height: 1.7; }
+@media (max-width: 640px) {
+  .contact-form-card { padding: 1.6rem 1.2rem; }
+  .contact-actions .btn { width: 100%; }
+}

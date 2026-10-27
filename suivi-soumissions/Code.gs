@@ -60,6 +60,7 @@ const CONFIG = {
 
   /* Réalisations (Portfolio) */
   ONGLET_REALISATIONS: 'Réalisations',
+  ONGLET_MESSAGES: 'Messages',
   DOSSIER_REALISATIONS: 'Atelier Reviva — Photos réalisations (publiques)',
 };
 
@@ -186,6 +187,9 @@ function installer() {
   /* Réalisations (page Portfolio) */
   installerRealisations_(ss, props);
 
+  /* Messages de la page Contact */
+  installerMessages_(ss);
+
   /* Dossier Drive des photos */
   if (!props.getProperty('DOSSIER_ID') || !dossierExiste_(props.getProperty('DOSSIER_ID'))) {
     const dossiers = DriveApp.getFoldersByName(CONFIG.DOSSIER_PHOTOS);
@@ -221,6 +225,7 @@ function doPost(e) {
     // Boutique
     if (payload.type === 'reservation') return reponse_(traiterReservation_(payload));
     if (payload.type === 'abonnement') return reponse_(traiterAbonnement_(payload));
+    if (payload.type === 'contact') return reponse_(traiterContact_(payload));
 
     const manquants = CHAMPS_OBLIGATOIRES.filter(c => !String(champs[c] || '').trim());
     if (manquants.length) return reponse_({ ok: false, erreur: 'Champs manquants : ' + manquants.join(', ') });
@@ -447,6 +452,7 @@ function envoyerRelancesDuJour() {
   });
 
   reservationsAPayer_(ss, finJournee).forEach(r => aRelancer.push(r));
+  messagesSansReponse_(ss).forEach(r => aRelancer.push(r));
 
   if (!envoyees.length && !aRelancer.length) return;
   envoyerResume_(ss, sheet, props.getProperty('COURRIEL_ATELIER'), envoyees, aRelancer);
@@ -1480,6 +1486,108 @@ function lireRealisationsPublic_() {
   const json = JSON.stringify(resultat);
   if (json.length < 95000) cache.put(CLE_CACHE_REALISATIONS, json, 600);
   return resultat;
+}
+
+
+/* ═══════════════════════════════════════════════
+   MESSAGES — formulaire de la page Contact
+═══════════════════════════════════════════════ */
+const COLONNES_MESSAGES = ['N°', 'Reçu le', 'Statut', 'Sujet', 'Prénom', 'Nom', 'Courriel', 'Téléphone', 'Ville', 'Message', 'Notes'];
+const STATUTS_MESSAGE = ['Nouveau', 'Répondu', 'Classé'];
+
+function installerMessages_(ss) {
+  const sheet = preparerOnglet_(ss, CONFIG.ONGLET_MESSAGES, COLONNES_MESSAGES);
+  const c = indexColonnes_(sheet);
+  const lignes = Math.max(sheet.getMaxRows(), 500) - 1;
+  sheet.getRange(2, c['Statut'] + 1, lignes, 1).setDataValidation(SpreadsheetApp.newDataValidation()
+    .requireValueInList(STATUTS_MESSAGE, true).setAllowInvalid(false)
+    .setHelpText('Passez à « Répondu » une fois la réponse envoyée : le message sort de la liste du matin.').build());
+  sheet.getRange(2, c['Reçu le'] + 1, lignes, 1).setNumberFormat('yyyy-mm-dd hh:mm');
+  sheet.setColumnWidth(c['Message'] + 1, 380);
+  const S = '$' + columnToLetter_(c['Statut'] + 1) + '2';
+  sheet.setConditionalFormatRules([
+    SpreadsheetApp.newConditionalFormatRule().whenFormulaSatisfied(formule_('=' + S + '="Nouveau"')).setBackground('#FFF6E0').setRanges([sheet.getRange(2, 1, lignes, sheet.getLastColumn())]).build(),
+  ]);
+}
+
+function traiterContact_(payload) {
+  const c = payload.champs || {};
+  const manquants = ['prenom', 'email', 'sujet', 'message'].filter(k => !texte_(c[k]));
+  if (manquants.length) return { ok: false, erreur: 'Champs manquants : ' + manquants.join(', ') };
+  if (!REGEX_COURRIEL.test(texte_(c.email))) return { ok: false, erreur: 'Courriel invalide' };
+  if (!texte_(c.consentement)) return { ok: false, erreur: 'Consentement requis' };
+
+  const props = PropertiesService.getScriptProperties();
+  const ss = SpreadsheetApp.openById(props.getProperty('SPREADSHEET_ID'));
+  const sheet = ss.getSheetByName(CONFIG.ONGLET_MESSAGES);
+  if (!sheet) return { ok: false, erreur: 'Onglet Messages absent' };
+  const col = indexColonnes_(sheet);
+
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  let numero, numLigne;
+  try {
+    numero = 'C-' + String(Number(props.getProperty('COMPTEUR_MESSAGES') || 0) + 1).padStart(4, '0');
+    props.setProperty('COMPTEUR_MESSAGES', numero.slice(2));
+    const ligne = new Array(sheet.getLastColumn()).fill('');
+    const poser = (t, v) => { if (col[t] !== undefined) ligne[col[t]] = v; };
+    poser('N°', numero); poser('Reçu le', new Date()); poser('Statut', 'Nouveau');
+    poser('Sujet', nettoyer_(c.sujet)); poser('Prénom', nettoyer_(c.prenom)); poser('Nom', nettoyer_(c.nom));
+    poser('Courriel', nettoyer_(c.email)); poser('Téléphone', nettoyer_(c.telephone)); poser('Ville', nettoyer_(c.ville));
+    poser('Message', nettoyer_(c.message));
+    sheet.appendRow(ligne);
+    numLigne = sheet.getLastRow();
+  } finally {
+    lock.releaseLock();
+  }
+
+  const lien = ss.getUrl() + '#gid=' + sheet.getSheetId() + '&range=A' + numLigne;
+  try {
+    const ligneHtml = (t, v) => v ? '<tr><td style="padding:5px 12px 5px 0;color:#9C8578;vertical-align:top;">' + t + '</td><td>' + echapper_(v).replace(/\n/g, '<br>') + '</td></tr>' : '';
+    MailApp.sendEmail({
+      to: props.getProperty('COURRIEL_ATELIER'),
+      replyTo: texte_(c.email),
+      subject: numero + ' — ' + texte_(c.sujet) + ' (' + (texte_(c.prenom) + ' ' + texte_(c.nom)).trim() + ')',
+      name: CONFIG.NOM_ATELIER + ' — Contact',
+      htmlBody: '<div style="font-family:Arial,sans-serif;color:#3D2E25;max-width:620px;">' +
+        '<h2 style="font-family:Georgia,serif;color:#A3624A;font-weight:normal;">Nouveau message : ' + echapper_(texte_(c.sujet)) + '</h2>' +
+        '<table style="border-collapse:collapse;font-size:14px;">' + ligneHtml('De', (texte_(c.prenom) + ' ' + texte_(c.nom)).trim()) +
+        ligneHtml('Courriel', c.email) + ligneHtml('Téléphone', c.telephone) + ligneHtml('Ville', c.ville) + ligneHtml('Message', c.message) + '</table>' +
+        '<p style="font-size:13px;color:#9C8578;">Répondez directement à ce courriel. Pensez ensuite à mettre le message à « Répondu » : <a href="' + lien + '" style="color:#A3624A;">ouvrir</a>.</p></div>',
+    });
+  } catch (err) { console.error('Alerte contact : ' + err); }
+  try {
+    MailApp.sendEmail({
+      to: texte_(c.email),
+      replyTo: props.getProperty('COURRIEL_ATELIER'),
+      subject: 'Nous avons bien reçu votre message — ' + CONFIG.NOM_ATELIER,
+      name: CONFIG.NOM_ATELIER,
+      body: 'Bonjour ' + texte_(c.prenom) + ',\n\nMerci pour votre message (référence ' + numero + '). Je vous réponds dans les 48 heures ouvrables.\n\n' +
+        'Au plaisir,\n' + CONFIG.SIGNATURE + '\n' + CONFIG.TELEPHONE,
+    });
+  } catch (err) { console.error('Accusé contact : ' + err); }
+  return { ok: true, numero: numero };
+}
+
+/* Messages encore « Nouveau » depuis plus d'un jour ouvrable → liste « À faire » du matin */
+function messagesSansReponse_(ss) {
+  const sheet = ss.getSheetByName(CONFIG.ONGLET_MESSAGES);
+  if (!sheet || sheet.getLastRow() < 2) return [];
+  const c = indexColonnes_(sheet);
+  const limite = ajouterJours_(new Date(), -1);
+  return sheet.getRange(2, 1, sheet.getLastRow() - 1, sheet.getLastColumn()).getValues()
+    .map((d, i) => ({ d: d, ligne: i + 2 }))
+    .filter(({ d }) => texte_(d[c['Statut']]) === 'Nouveau' && d[c['Reçu le']] instanceof Date && d[c['Reçu le']] < limite)
+    .map(({ d, ligne }) => ({
+      ligne: ligne,
+      lien: ss.getUrl() + '#gid=' + sheet.getSheetId() + '&range=A' + ligne,
+      numero: d[c['N°']],
+      client: (texte_(d[c['Prénom']]) + ' ' + texte_(d[c['Nom']])).trim(),
+      meuble: 'Message', service: texte_(d[c['Sujet']]), montant: '',
+      courriel: texte_(d[c['Courriel']]), telephone: d[c['Téléphone']], nbRelances: 0,
+      enRetard: Math.round((debutJournee_(new Date()) - debutJournee_(d[c['Reçu le']])) / 86400000),
+      raison: 'Message sans réponse : répondre, puis passer le statut à « Répondu »',
+    }));
 }
 
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contact – Atelier Reviva | Revalorisation de meubles Québec</title>
-  <meta name="description" content="Contactez Atelier Reviva pour vos projets de revalorisation de meubles, une demande de soumission ou toute question. Réponse sous 48h. Rive-Sud, Québec." />
+  <meta name="description" content="Contactez Atelier Reviva : (514) 430-6221, atelier.reviva.meubles@gmail.com. Question, meuble à transformer ou de la boutique — réponse sous 48 h." />
   <link rel="canonical" href="https://atelierreviva.ca/contact.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -21,101 +21,92 @@
   </header>
 
   <main>
-    <section class="page-hero">
-      <nav class="breadcrumb"><a href="index.html">Accueil</a><span>/</span><span>Contact</span></nav>
+    <section class="page-hero page-hero--compact">
+      <nav class="breadcrumb" aria-label="Fil d'Ariane"><a href="index.html">Accueil</a><span>/</span><span>Contact</span></nav>
       <span class="page-hero-eyebrow">On vous écoute</span>
       <h1>Parlons de votre <em>projet</em></h1>
-      <p>Décrivez votre meuble, votre vision et vos questions. Nous vous répondons sous 48 heures ouvrables.</p>
+      <p>Une question, un meuble à transformer, une pièce vue dans la boutique ? Écrivez-nous ou appelez : réponse sous 48 heures ouvrables.</p>
+      <div class="contact-actions">
+        <a href="tel:+15144306221" class="btn btn-primary btn-wrap">Appeler le (514) 430-6221</a>
+        <a href="services.html#soumission" class="btn btn-outline btn-wrap">Demander une soumission</a>
+      </div>
     </section>
 
     <section class="section-pad" style="background:var(--ivory);">
       <div class="container">
         <div class="contact-grid">
 
-          <!-- Formulaire de contact -->
+          <!-- Formulaire de contact (envoyé au Google Sheets de l'atelier, onglet Messages) -->
           <div>
-            <div style="background:var(--white);border:1px solid var(--sand-light);border-radius:var(--radius-lg);padding:3rem;box-shadow:var(--shadow-sm);">
-
-              <div class="form-success" id="contactSuccess">
+            <div class="contact-form-card">
+              <div class="form-success" id="contactSuccess" tabindex="-1">
                 <div class="form-success-icon">✦</div>
                 <h3>Message envoyé !</h3>
-                <p>Merci de nous avoir contactés. Nous vous répondrons dans les 48 heures ouvrables.</p>
+                <p>Merci, nous avons bien reçu votre message<span id="contactNumero"></span>. Un accusé de réception vient de partir dans votre boîte courriel ; nous vous répondons dans les 48 heures ouvrables.</p>
               </div>
 
               <form id="contactForm" novalidate>
-
-                <div class="form-grid-2" style="margin-bottom:1.2rem;">
-                  <div class="form-group"><label class="form-label" for="cPrenom">Prénom <span class="required">*</span></label><input type="text" id="cPrenom" class="form-input" placeholder="Votre prénom" required /></div>
-                  <div class="form-group"><label class="form-label" for="cNom">Nom <span class="required">*</span></label><input type="text" id="cNom" class="form-input" placeholder="Votre nom" required /></div>
+                <h2 class="contact-form-title">Écrivez-nous</h2>
+                <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp-field" />
+                <div class="form-grid-2">
+                  <div class="form-group"><label class="form-label" for="cPrenom">Prénom <span class="required">*</span></label><input type="text" id="cPrenom" name="prenom" class="form-input" autocomplete="given-name" required /></div>
+                  <div class="form-group"><label class="form-label" for="cNom">Nom</label><input type="text" id="cNom" name="nom" class="form-input" autocomplete="family-name" /></div>
                 </div>
-                <div class="form-grid-2" style="margin-bottom:1.2rem;">
-                  <div class="form-group"><label class="form-label" for="cEmail">Courriel <span class="required">*</span></label><input type="email" id="cEmail" class="form-input" placeholder="votre@courriel.ca" required /></div>
-                  <div class="form-group"><label class="form-label" for="cTel">Téléphone</label><input type="tel" id="cTel" class="form-input" placeholder="418 000-0000" /></div>
+                <div class="form-grid-2">
+                  <div class="form-group"><label class="form-label" for="cEmail">Courriel <span class="required">*</span></label><input type="email" id="cEmail" name="email" class="form-input" autocomplete="email" required /></div>
+                  <div class="form-group"><label class="form-label" for="cTel">Téléphone</label><input type="tel" id="cTel" name="telephone" class="form-input" autocomplete="tel" placeholder="514 000-0000" /></div>
                 </div>
-                <div class="form-grid-2" style="margin-bottom:1.2rem;">
-                  <div class="form-group"><label class="form-label" for="cType">Type de demande <span class="required">*</span></label><select id="cType" class="form-select" required><option value="" disabled selected>Choisissez</option><option>Demande de soumission</option><option>Question sur un meuble à vendre</option><option>Information formation</option><option>Liste d'attente formation</option><option>Autre question</option></select></div>
-                  <div class="form-group"><label class="form-label" for="cVille">Ville / Région</label><input type="text" id="cVille" class="form-input" placeholder="Ex : Brossard, Montréal..." /></div>
+                <div class="form-grid-2">
+                  <div class="form-group"><label class="form-label" for="cSujet">Sujet <span class="required">*</span></label>
+                    <select id="cSujet" name="sujet" class="form-select" required>
+                      <option value="" disabled selected>Choisissez</option>
+                      <option>Question générale</option>
+                      <option>Meuble à transformer</option>
+                      <option>Meuble de la boutique</option>
+                      <option>Formation</option>
+                      <option>Collaboration / autre</option>
+                    </select></div>
+                  <div class="form-group"><label class="form-label" for="cVille">Ville</label><input type="text" id="cVille" name="ville" class="form-input" placeholder="Ex. : Longueuil" /></div>
                 </div>
-                <div class="form-group" style="margin-bottom:1.2rem;"><label class="form-label" for="cMessage">Description de votre projet <span class="required">*</span></label><textarea id="cMessage" class="form-textarea" rows="5" placeholder="Décrivez votre meuble, votre projet, votre question... Plus vous êtes précis, plus notre réponse sera utile." required style="min-height:160px;"></textarea></div>
-
-                <!-- Upload photos -->
-                <div style="margin-bottom:1.5rem;">
-                  <label class="form-label" style="margin-bottom:0.6rem; display:block;">Photos de votre meuble (optionnel)</label>
-                  <div class="form-upload" id="contactUpload">
-                    <input type="file" id="cPhotos" name="photos" accept="image/*" multiple aria-label="Ajouter des photos" />
-                    <div class="form-upload-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
-                    <p class="form-upload-title">Glissez vos photos ou cliquez pour parcourir</p>
-                    <p class="form-upload-hint">JPG, PNG · Jusqu'à 5 photos</p>
-                    <div class="form-upload-preview" id="contactPreview"></div>
-                  </div>
-                </div>
-
-                <label class="form-check" style="margin-bottom:1.5rem;"><input type="checkbox" required /><span class="form-check-label">J'accepte d'être contacté(e) par Atelier Reviva. <span class="required">*</span></span></label>
-                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:1rem;">Envoyer mon message</button>
-                <p style="text-align:center;font-size:0.74rem;color:var(--text-muted);margin-top:1rem;">Réponse garantie sous 48h ouvrables</p>
+                <p class="contact-hint" id="contactHint" hidden>Pour un meuble à transformer, le <a href="services.html#soumission">formulaire de soumission</a> permet d'envoyer des photos et d'obtenir un prix plus vite.</p>
+                <div class="form-group"><label class="form-label" for="cMessage">Message <span class="required">*</span></label><textarea id="cMessage" name="message" class="form-textarea" rows="5" required></textarea></div>
+                <label class="form-check"><input type="checkbox" name="consentement" required /><span class="form-check-label">J'accepte d'être contacté(e) par Atelier Reviva au sujet de mon message (voir la <a href="confidentialite.html" target="_blank">politique de confidentialité</a>). <span class="required">*</span></span></label>
+                <p class="form-alert" id="contactErreur" role="alert" hidden></p>
+                <button type="submit" class="btn btn-primary btn-wrap contact-submit" id="contactSubmit">Envoyer mon message</button>
               </form>
             </div>
           </div>
 
-          <!-- Infos de contact -->
-          <div>
+          <!-- Coordonnées -->
+          <aside>
             <div class="contact-info-card">
               <h2 class="contact-info-title">Atelier Reviva</h2>
-              <div class="contact-info-list">
-                <div class="contact-info-item">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <div><strong style="display:block;margin-bottom:0.2rem;font-size:0.88rem;">Localisation</strong><span>Rive-Sud, Montérégie<br>Québec, Canada</span></div>
-                </div>
-                <div class="contact-info-item">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                  <div><strong style="display:block;margin-bottom:0.2rem;font-size:0.88rem;">Téléphone</strong><a href="tel:+14181234567">418 123-4567</a></div>
-                </div>
-                <div class="contact-info-item">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                  <div><strong style="display:block;margin-bottom:0.2rem;font-size:0.88rem;">Courriel</strong><a href="mailto:info@atelierreviva.ca">info@atelierreviva.ca</a></div>
-                </div>
-                <div class="contact-info-item">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  <div><strong style="display:block;margin-bottom:0.2rem;font-size:0.88rem;">Délai de réponse</strong><span>Dans les 48h ouvrables</span></div>
-                </div>
+              <ul class="contact-coord">
+                <li><span class="contact-coord-label">Téléphone</span><a href="tel:+15144306221">(514) 430-6221</a></li>
+                <li><span class="contact-coord-label">Courriel</span><a href="mailto:atelier.reviva.meubles@gmail.com">atelier.reviva.meubles@gmail.com</a></li>
+                <li><span class="contact-coord-label">Atelier</span><span>Rive-Sud de Montréal — adresse fournie lors de la prise de rendez-vous</span></li>
+              </ul>
+
+              <div class="contact-heures">
+                <div class="contact-heures-tete"><span class="contact-coord-label">Heures d'ouverture</span><span class="contact-statut" id="contactStatut"></span></div>
+                <ul id="contactHeures">
+                  <li data-jour="1"><span>Lundi</span><span>9 h – 16 h 30</span></li>
+                  <li data-jour="2"><span>Mardi</span><span>9 h – 16 h 30</span></li>
+                  <li data-jour="3"><span>Mercredi</span><span>9 h – 16 h 30</span></li>
+                  <li data-jour="4"><span>Jeudi</span><span>9 h – 16 h 30</span></li>
+                  <li data-jour="5"><span>Vendredi</span><span>9 h – 16 h 30</span></li>
+                  <li data-jour="6"><span>Samedi</span><span>Fermé</span></li>
+                  <li data-jour="0"><span>Dimanche</span><span>Fermé</span></li>
+                </ul>
+                <p class="contact-note">Visites à l'atelier sur rendez-vous seulement.</p>
               </div>
 
-              <!-- Réseaux sociaux -->
-              <div style="border-top:1px solid var(--sand);padding-top:1.5rem;margin-bottom:1.5rem;">
-                <p style="font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;">Suivez-nous</p>
-                <div style="display:flex;gap:0.5rem;">
-                  <a href="#" aria-label="Instagram" style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--brown-text);padding:0.6rem 1rem;border:1px solid var(--sand);border-radius:var(--radius-sm);transition:all 0.2s;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Instagram</a>
-                  <a href="#" aria-label="Facebook" style="display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--brown-text);padding:0.6rem 1rem;border:1px solid var(--sand);border-radius:var(--radius-sm);transition:all 0.2s;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>Facebook</a>
-                </div>
-              </div>
-
-              <!-- Zones desservies -->
               <div class="contact-zones">
-                <strong style="display:block;font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-main);margin-bottom:0.7rem;">Zones desservies</strong>
-                Rive-Sud · Montérégie · Montréal · Longueuil · Brossard · Saint-Bruno · Chambly · Saint-Lambert · Beloeil · La Prairie et environs
+                <span class="contact-coord-label">Zones desservies</span>
+                Rive-Sud · Longueuil · Brossard · Montréal et environs. Collecte et livraison possibles selon la distance.
               </div>
             </div>
-          </div>
+          </aside>
 
         </div>
       </div>
@@ -127,35 +118,12 @@
       <div class="footer-brand"><a href="index.html" class="footer-logo-link" aria-label="Atelier Reviva"><div class="footer-logo-mark"><svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="40" cy="40" r="38" stroke="#C47B5A" stroke-width="0.8"/><rect x="20" y="38" width="40" height="18" rx="2" stroke="#B89A6A" stroke-width="0.9" fill="none"/><rect x="20" y="31" width="40" height="9" rx="1" stroke="#B89A6A" stroke-width="0.9" fill="none"/><line x1="40" y1="38" x2="40" y2="56" stroke="#B89A6A" stroke-width="0.6"/><circle cx="32" cy="43" r="1.5" fill="#B89A6A"/><circle cx="48" cy="43" r="1.5" fill="#B89A6A"/></svg></div><div><p class="footer-brand-name">Atelier Reviva</p><p class="footer-brand-tag">Revalorisation de meubles</p></div></a><p class="footer-tagline">Redonner vie aux meubles avec élégance, durabilité et savoir-faire artisanal — au Québec.</p></div>
       <div class="footer-links-col"><h4 class="footer-heading">Navigation</h4><ul class="footer-links"><li><a href="index.html">Accueil</a></li><li><a href="services.html">Services</a></li><li><a href="meubles.html">Meubles à vendre</a></li><li><a href="portfolio.html">Portfolio</a></li><li><a href="formation.html">Formation</a></li><li><a href="apropos.html">À propos</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
       <div class="footer-links-col"><h4 class="footer-heading">Services</h4><ul class="footer-links"><li><a href="services.html">Revalorisation</a></li><li><a href="services.html">Peinture</a></li><li><a href="services.html">Restauration</a></li><li><a href="services.html#soumission">Soumission gratuite</a></li><li><a href="faq.html">FAQ</a></li></ul></div>
-      <div class="footer-links-col"><h4 class="footer-heading">Contact</h4><ul class="footer-links footer-contact"><li>Québec &amp; Rive-Sud</li><li><a href="mailto:info@atelierreviva.ca">info@atelierreviva.ca</a></li><li><a href="tel:+14181234567">418 123-4567</a></li></ul><div class="footer-shopify"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Paiements sécurisés via Shopify pour les meubles à vendre</span></div></div>
+      <div class="footer-links-col"><h4 class="footer-heading">Contact</h4><ul class="footer-links footer-contact"><li>Québec &amp; Rive-Sud</li><li><a href="mailto:atelier.reviva.meubles@gmail.com">atelier.reviva.meubles@gmail.com</a></li><li><a href="tel:+15144306221">(514) 430-6221</a></li></ul><div class="footer-shopify"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Meubles réservés en ligne, payés par Interac ou à la cueillette</span></div></div>
     </div>
-    <div class="footer-bottom"><p>© 2025 Atelier Reviva. Tous droits réservés.</p><div class="footer-legal"><a href="#">Politique de confidentialité</a><a href="#">Conditions</a><a href="faq.html">FAQ</a></div></div>
+    <div class="footer-bottom"><p>© 2026 Atelier Reviva. Tous droits réservés.</p><div class="footer-legal"><a href="confidentialite.html">Politique de confidentialité</a><a href="faq.html">FAQ</a></div></div>
   </footer>
 
   <script src="js/main.js"></script>
-  <script>
-    // Photo preview
-    const cPhotos = document.getElementById('cPhotos');
-    const cPreview = document.getElementById('contactPreview');
-    if (cPhotos) {
-      cPhotos.addEventListener('change', () => {
-        cPreview.innerHTML = '';
-        Array.from(cPhotos.files).slice(0, 5).forEach(file => {
-          const reader = new FileReader();
-          reader.onload = e => { const img = document.createElement('img'); img.src = e.target.result; img.alt = file.name; cPreview.appendChild(img); };
-          reader.readAsDataURL(file);
-        });
-      });
-    }
-    // Form submit
-    const cf = document.getElementById('contactForm');
-    if (cf) {
-      cf.addEventListener('submit', e => {
-        e.preventDefault();
-        cf.style.display = 'none';
-        document.getElementById('contactSuccess').classList.add('visible');
-      });
-    }
-  </script>
+  <script src="js/contact.js"></script>
 </body>
 </html>

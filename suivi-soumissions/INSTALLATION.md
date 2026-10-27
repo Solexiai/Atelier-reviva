@@ -28,7 +28,7 @@ Tout se passe dans le compte Google de l'atelier. C'est gratuit, et aucun compte
    - cliquez sur **Autoriser**.
 4. Relancez **Atelier Reviva → Installer / réparer le suivi** une deuxième fois. Le message « Suivi installé » s'affiche en bas à droite.
 
-Vous avez maintenant les onglets **Suivi des soumissions**, **Tableau de bord**, **Modèles de relance**, **Inventaire**, **Réservations**, **Abonnés nouveautés** et **Réalisations**. Un dossier Drive **Atelier Reviva — Photos des soumissions** a aussi été créé.
+Vous avez maintenant les onglets **Suivi des soumissions**, **Tableau de bord**, **Modèles de relance**, **Inventaire**, **Réservations**, **Abonnés nouveautés**, **Réalisations** et **Messages**. Un dossier Drive **Atelier Reviva — Photos des soumissions** a aussi été créé.
 
 ### 4. Mettre le programme en ligne
 1. Revenez dans l'éditeur Apps Script.
@@ -215,6 +215,12 @@ La page **Portfolio** montre les transformations avec un curseur **avant / aprè
 Mettez **Oui** dans la colonne **Vedette** du projet à afficher en grand en haut de la page. Sans vedette, c'est le projet le plus récent qui a une photo avant. Le projet à la une n'apparaît que lorsqu'au moins 2 projets sont publiés.
 
 Un projet en **Brouillon**, ou publié sans aucune photo, n'apparaît pas sur le site. La colonne **Nb photos** indique combien de photos ont été trouvées.
+
+## Les messages (page Contact)
+
+Les messages envoyés depuis la page **Contact** arrivent dans l'onglet **Messages**, numérotés C-0001, C-0002… Vous recevez une alerte par courriel (répondre au courriel écrit directement au visiteur), et le visiteur reçoit un accusé de réception.
+
+Une fois la réponse envoyée, passez le **Statut** à **Répondu**. Un message encore « Nouveau » après un jour apparaît dans le courriel du matin.
 
 ## Réglages (facultatif)
 
