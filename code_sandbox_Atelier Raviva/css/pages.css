@@ -1537,7 +1537,7 @@ button[type="submit"]:disabled {
 .srv-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
 .srv-card { background: var(--white); border: 1px solid var(--sand-light); border-radius: var(--radius-md); overflow: hidden; display: flex; flex-direction: column; }
 .srv-media {
-  position: relative; aspect-ratio: 16 / 9; overflow: hidden;
+  position: relative; aspect-ratio: 3 / 2; overflow: hidden;
   background: linear-gradient(135deg, var(--cream) 0%, var(--sand-light) 100%);
   display: flex; align-items: center; justify-content: center;
 }
@@ -1613,3 +1613,4 @@ button[type="submit"]:disabled {
   .contact-form-card { padding: 1.6rem 1.2rem; }
   .contact-actions .btn { width: 100%; }
 }
+
