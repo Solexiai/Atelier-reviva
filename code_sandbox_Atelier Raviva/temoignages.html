@@ -11,6 +11,39 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/pages.css?v=stats-20261124" />
+
+  <style>
+    .tv-section{background:var(--ivory)}
+    .tv-feature{max-width:860px;margin:0 auto var(--space-lg);background:var(--white);border:1px solid var(--sand-light);border-radius:var(--radius-lg);padding:3rem 3.2rem 2.4rem;position:relative;text-align:center}
+    .tv-feature::before{content:"“";position:absolute;top:1.2rem;left:2rem;font-family:var(--font-serif);font-size:6rem;line-height:1;color:var(--sand)}
+    .tv-feature-tag{display:inline-block;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--terracotta);border:1px solid var(--terracotta);border-radius:100px;padding:.35rem 1rem;margin-bottom:1.4rem}
+    .tv-feature blockquote p{font-family:var(--font-serif);font-style:italic;font-size:1.35rem;line-height:1.65;color:var(--text-main)}
+    .tv-feature figcaption{margin-top:1.2rem;font-size:.82rem;color:var(--text-muted)}
+    .tv-feature figcaption strong{color:var(--text-main);font-weight:500}
+    .tv-reply{margin:1.6rem auto 0;max-width:620px;background:var(--cream);border-left:3px solid var(--terracotta);text-align:left;padding:.9rem 1.2rem;font-size:.84rem;color:var(--brown-text);line-height:1.6;border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+    .tv-reply span{display:block;font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--terracotta);margin-bottom:.3rem}
+    .tv-filters{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:var(--space-md)}
+    .tv-grid{columns:3;column-gap:var(--space-md)}
+    .tv-card{break-inside:avoid;margin:0 0 var(--space-md);background:var(--white);border:1px solid var(--sand-light);border-radius:var(--radius-md);padding:1.8rem 1.7rem 1.4rem;position:relative}
+    .tv-card[hidden]{display:none}
+    .tv-text{font-family:var(--font-serif);font-style:italic;font-size:1rem;line-height:1.7;color:var(--text-main);margin-bottom:.9rem}
+    .tv-text:last-of-type{margin-bottom:1.2rem}
+    .tv-stars{color:var(--gold);font-size:.78rem;letter-spacing:.12em;margin-bottom:.8rem}
+    .tv-author{display:flex;align-items:center;gap:.75rem;border-top:1px solid var(--sand-light);padding-top:1rem}
+    .tv-avatar{width:38px;height:38px;border-radius:50%;background:var(--sand-light);border:1px solid var(--sand);display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);color:var(--gold);flex-shrink:0}
+    .tv-info{flex:1;line-height:1.35}
+    .tv-info strong{display:block;font-size:.84rem;font-weight:500;color:var(--text-main)}
+    .tv-info span{display:block;font-size:.74rem;color:var(--terracotta)}
+    .tv-tr{display:block;font-size:.66rem;color:var(--text-muted)}
+    .tv-g{width:22px;height:22px;border-radius:50%;border:1px solid var(--sand);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--text-muted);flex-shrink:0}
+    .tv-google{text-align:center;margin-top:var(--space-md)}
+    .tv-google p{font-size:.86rem;color:var(--text-muted);margin-bottom:1rem}
+    .tv-google .btn{margin:.3rem}
+    .tv-google-small{margin-top:1rem;font-size:.78rem!important}
+    .sk-flag{display:inline-block;font-size:.62rem;letter-spacing:.06em;background:#FFF1C9;color:#7A5A00;border:1px dashed #C9A23A;border-radius:4px;padding:.2rem .5rem;margin-bottom:.8rem}
+    @media (max-width:1024px){.tv-grid{columns:2}}
+    @media (max-width:640px){.tv-grid{columns:1}.tv-feature{padding:2.4rem 1.4rem 1.8rem}.tv-feature blockquote p{font-size:1.12rem}}
+  </style>
 </head>
 <body>
   <header class="site-header" id="header">
@@ -29,7 +62,7 @@
       <nav class="breadcrumb"><a href="index.html">Accueil</a><span>/</span><span>Témoignages</span></nav>
       <span class="page-hero-eyebrow">Ce qu'ils disent</span>
       <h1>Témoignages <em>clients</em></h1>
-      <p>La satisfaction de nos clients est notre plus belle récompense. Leurs avis seront publiés ici très bientôt.</p>
+      <p>La satisfaction de nos clients est notre plus belle récompense. Voici ce qu'ils disent d'Atelier Reviva.</p>
     </section>
 
     <!-- STATS -->
@@ -43,14 +76,117 @@
       </div>
     </section>
 
-    <!-- TÉMOIGNAGES — les vrais avis clients seront ajoutés ici -->
-    <section class="section-pad" style="background:var(--ivory);">
+    <!-- TÉMOIGNAGES — vrais avis Google -->
+    <section class="section-pad tv-section">
       <div class="container">
-        <div class="shop-empty">
-          <div class="shop-empty-mark" aria-hidden="true">✦</div>
-          <h2 class="shop-empty-title">Les témoignages de nos clients <em>arrivent bientôt</em></h2>
-          <p class="shop-empty-text">Vous avez confié un meuble à l'atelier ? Votre avis compte beaucoup pour nous : écrivez-nous pour partager votre expérience.</p>
-          <a href="contact.html" class="btn btn-primary">Partager mon expérience</a>
+        <figure class="tv-feature">
+          <span class="tv-feature-tag">Coup de cœur</span>
+          <blockquote>
+            <p>J'ai fait affaire avec Atelier Reviva pour la restauration de 4 vieilles chaises de cuisine de mon enfance ayant une très grande valeur sentimentale, mais aussi plusieurs couches de peinture ! Juliette et Alcide ont su relever le défi avec brio et en un temps record. Merci encore pour votre bon travail !</p>
+          </blockquote>
+          <figcaption><strong>Marjolaine C.</strong> · 4 chaises de cuisine de son enfance</figcaption>
+          <div class="tv-reply"><span>Réponse de Juliette</span>Ce fut un réel plaisir de redonner une seconde vie à ces quatre chaises chargées de souvenirs. Un beau défi, mais tellement gratifiant !</div>
+        </figure>
+
+        <div class="tv-filters" role="group" aria-label="Filtrer les avis">
+          <button class="filter-btn active" data-f="all">Tous les avis</button>
+          <button class="filter-btn" data-f="revalo">Revalorisation &amp; restauration</button>
+          <button class="filter-btn" data-f="boutique">Achats en boutique</button>
+          <button class="filter-btn" data-f="mesure">Sur mesure &amp; recherche</button>
+        </div>
+
+        <div class="tv-grid">
+          <blockquote class="tv-card" data-cat="revalo">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Je n&#x27;ai pas assez de mots pour décrire le travail de Juliette ! Elle a complètement transformé ma coiffeuse et le résultat est tout simplement magnifique. Le travail est impeccable, les finitions sont incroyables et je suis vraiment en amour avec mon meuble.</p><p class="tv-text">Mais ce que j&#x27;ai particulièrement apprécié, au-delà de son talent, c&#x27;est sa façon de travailler. Juliette est très honnête et transparente. Tout au long du processus, elle m&#x27;a tenue au courant de l&#x27;état du meuble, de ce qui pouvait être fait et des différentes possibilités. Elle prend vraiment le temps d&#x27;expliquer les choses et de trouver la meilleure solution pour son client, sans jamais essayer de vendre quelque chose d&#x27;inutile.</p><p class="tv-text">Ses prix sont aussi très honnêtes, surtout pour la qualité de son travail. J&#x27;avais demandé des soumissions ailleurs avant de la trouver et les montants étaient beaucoup plus élevés.</p><p class="tv-text">Juliette est une véritable artiste et une professionnelle que je recommande sans hésitation. Pour moi, c&#x27;est un 11/10 ! ❤</p>
+            <footer class="tv-author"><span class="tv-avatar">J</span><span class="tv-info"><strong>Jessica V.</strong><span>Coiffeuse</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="revalo">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Je suis plus que contente d&#x27;avoir fait appel aux services de Juliette pour la revalorisation de mes tables de chevet. Elle a répondu rapidement et en détail à mes questions, m&#x27;a bien conseillée, a travaillé de façon impeccable et rapidement. Mes tables sont superbes ! Je n&#x27;hésiterais pas une seconde à lui confier d&#x27;autres meubles.</p>
+            <footer class="tv-author"><span class="tv-avatar">A</span><span class="tv-info"><strong>Anne-Marie P.</strong><span>Tables de chevet en noyer</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="boutique">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Superbe travail de restauration, allant même jusqu&#x27;à la fabrication d&#x27;une nouvelle base en merisier. La vendeuse répond rapidement aux messages, elle est d&#x27;une grande gentillesse et elle a répondu à toutes mes questions sur les produits utilisés et le processus. Je suis ravie de mon expérience d&#x27;achat !</p>
+            <footer class="tv-author"><span class="tv-avatar">M</span><span class="tv-info"><strong>Martine B.</strong><span>Restauration et nouvelle base en merisier</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="revalo">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Juliette a fait un travail formidable en restaurant mon ensemble de salle à manger ancien ! Elle était très disponible, réactive et m&#x27;a proposé des idées pertinentes tout au long du projet.</p><p class="tv-text">Ce fut un réel plaisir de travailler avec elle et je referai appel à ses services sans hésiter ! Je la recommande vivement !</p>
+            <footer class="tv-author"><span class="tv-avatar">A</span><span class="tv-info"><strong>Alissa B.</strong><span>Ensemble de salle à manger ancien</span><em class="tv-tr">Traduit de l'anglais</em></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="boutique">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Super service avec Juliette ! Réponses rapides, transaction facile. Elle a emballé mon meuble pour s&#x27;assurer qu&#x27;il reste beau dans le transport et m&#x27;a même prêté une couverture pour le protéger dans la voiture. Entièrement satisfaite ! La commode que j&#x27;ai achetée est un petit bijou !</p>
+            <footer class="tv-author"><span class="tv-avatar">C</span><span class="tv-info"><strong>Christiane P.</strong><span>Commode de la boutique</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="revalo">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Je suis ravie d&#x27;avoir trouvé Juliette pour restaurer un vieux meuble radio ayant appartenu à mes grands-parents ! Je n&#x27;avais pas d&#x27;idée précise du résultat souhaité, mais Juliette m&#x27;a proposé différentes idées et s&#x27;est assurée que je sois satisfaite à chaque étape. Le résultat final est parfait et j&#x27;adore le rendu ! Je suis très impressionnée par le talent de Juliette, son souci du détail et sa réactivité. Une expérience formidable !</p>
+            <footer class="tv-author"><span class="tv-avatar">L</span><span class="tv-info"><strong>Lori V.</strong><span>Meuble radio des grands-parents</span><em class="tv-tr">Traduit de l'anglais</em></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="revalo">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Nous avons fait affaire avec Juliette pour redonner vie à nos commodes antiques. Le résultat était tout simplement magnifique ! Elle a un immense talent et donne des directions et des conseils que nous avons beaucoup appréciés.</p>
+            <footer class="tv-author"><span class="tv-avatar">E</span><span class="tv-info"><strong>Elianne M.</strong><span>Commodes antiques</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="mesure">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Nous avons fait faire un meuble sur mesure avec Juliette et nous sommes extrêmement contents !</p>
+            <footer class="tv-author"><span class="tv-avatar">G</span><span class="tv-info"><strong>Gabriella H.</strong><span>Meuble sur mesure</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="revalo">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Merci à Atelier Reviva pour la belle transformation de nos meubles. On sent le soin, le talent et la passion dans chaque détail. Très heureux d&#x27;avoir eu cette belle touche dans notre maison.</p>
+            <footer class="tv-author"><span class="tv-avatar">D</span><span class="tv-info"><strong>Daniel T.</strong><span>Meubles de la maison</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="revalo">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">J&#x27;ai apporté un meuble à Juliette pour une revalorisation, pour un petit air de jeunesse, et je suis très satisfaite. Juliette est professionnelle, à l&#x27;écoute et avec une excellente communication. Je recommande grandement ses services.</p>
+            <footer class="tv-author"><span class="tv-avatar">R</span><span class="tv-info"><strong>Rachel P.</strong><span>Meuble de famille</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="mesure">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Nous aimons beaucoup le travail de Juliette ! Nous cherchions une commode pour notre chambre, elle a fait les recherches pour nous selon nos critères puis l&#x27;a revalorisée avec beaucoup de goût. Nous avons beaucoup apprécié qu&#x27;elle nous tienne informés et impliqués à chaque étape du processus, tout en nous guidant et nous conseillant ! Et le résultat est magnifique ! Nous sommes très satisfaits !</p>
+            <footer class="tv-author"><span class="tv-avatar">A</span><span class="tv-info"><strong>Amandine R.</strong><span>Commode trouvée et revalorisée</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="revalo">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Excellente communication et réparations impeccables. Je suis ravi du ponçage et de la restauration de mes meubles Telefunken vintage. Merci beaucoup !</p>
+            <footer class="tv-author"><span class="tv-avatar">M</span><span class="tv-info"><strong>Maria &amp; Tawsif</strong><span>Meubles Telefunken vintage</span><em class="tv-tr">Traduit de l'anglais</em></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="boutique">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Service impeccable ! Très à l&#x27;écoute des besoins des clients. Très bonne expérience pour les trois meubles achetés à trois différentes occasions !</p>
+            <footer class="tv-author"><span class="tv-avatar">J</span><span class="tv-info"><strong>Josiane P.</strong><span>Trois meubles de la boutique</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="revalo">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">J&#x27;ai adoré mon expérience avec la compagnie. Mon meuble a eu une deuxième vie grâce à eux. Merci !</p>
+            <footer class="tv-author"><span class="tv-avatar">M</span><span class="tv-info"><strong>Marc-André L.</strong><span>Meuble de famille</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="revalo">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">La restauration de notre meuble est une réussite. Belle communication avec Juliette. Travail de pro !</p>
+            <footer class="tv-author"><span class="tv-avatar">D</span><span class="tv-info"><strong>Dominique G.</strong><span>Restauration</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="revalo">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Juliette est super minutieuse et elle fait des petits miracles avec des meubles uniques :)</p>
+            <footer class="tv-author"><span class="tv-avatar">E</span><span class="tv-info"><strong>Emma G.-M.</strong><span>Meubles uniques</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+          <blockquote class="tv-card" data-cat="revalo">
+            <div class="tv-stars" aria-label="5 étoiles sur 5">★★★★★</div>
+            <p class="tv-text">Juliette est bien plus qu&#x27;une artiste : elle insuffle une âme à chaque création. Dès les premiers échanges, nous avons été touchés par sa sensibilité, sa vision et son souci du détail exceptionnel. Au fil des projets réalisés dans notre maison, elle a su transformer nos espaces en véritables lieux de vie, empreints d&#x27;élégance, de chaleur et d&#x27;émotion.</p><p class="tv-text">Chacune de ses œuvres raconte une histoire et procure un sentiment profond de bien-être. Collaborer avec elle a été une expérience aussi inspirante que précieuse. Nous la recommandons avec la plus grande confiance.</p>
+            <footer class="tv-author"><span class="tv-avatar">D</span><span class="tv-info"><strong>Daniel T.</strong><span>Plusieurs projets pour la maison</span></span><span class="tv-g" title="Avis publié sur Google">G</span></footer>
+          </blockquote>
+        </div>
+
+        <div class="tv-google">
+          <p>Note de 5,0 sur 5 · 18 avis publiés par nos clients sur Google.</p>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Atelier+Reviva+1853+Rue+Th%C3%A9odore+Montr%C3%A9al" class="btn btn-primary" target="_blank" rel="noopener">Voir nos avis sur Google</a>
+          <p class="tv-google-small">Vous êtes client ? Sur notre fiche Google, cliquez sur « Écrire un avis » : votre retour compte beaucoup pour nous.</p>
         </div>
       </div>
     </section>
@@ -76,5 +212,15 @@
     <div class="footer-bottom"><p>© 2025 Atelier Reviva. Tous droits réservés.</p><div class="footer-legal"><a href="#">Politique de confidentialité</a><a href="#">Conditions</a><a href="faq.html">FAQ</a></div></div>
   </footer>
   <script src="js/main.js"></script>
+
+  <script>
+    document.querySelectorAll('.tv-filters .filter-btn').forEach(function(b){
+      b.addEventListener('click',function(){
+        document.querySelectorAll('.tv-filters .filter-btn').forEach(function(x){x.classList.toggle('active',x===b)});
+        var f=b.dataset.f;
+        document.querySelectorAll('.tv-card').forEach(function(c){c.hidden=!(f==='all'||c.dataset.cat===f)});
+      });
+    });
+  </script>
 </body>
 </html>
