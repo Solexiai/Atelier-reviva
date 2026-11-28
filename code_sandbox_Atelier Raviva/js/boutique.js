@@ -93,7 +93,7 @@
     if (!vide.hidden) {
       $('shopEmptyText').textContent = liste.length
         ? 'Toutes nos pièces ont trouvé preneur ! Les prochaines sont en train de prendre vie à l\'atelier. Inscrivez-vous pour les découvrir avant tout le monde.'
-        : 'Les prochaines pièces sont en train de prendre vie à l\'atelier : décapage, réparations, teintes choisies avec soin. Inscrivez-vous pour les découvrir avant tout le monde.';
+        : 'Les prochaines pièces sont en train de prendre vie à l\'atelier : décapage, retouches, teintes choisies avec soin. Inscrivez-vous pour les découvrir avant tout le monde.';
     }
 
     construireFiltres(liste);
