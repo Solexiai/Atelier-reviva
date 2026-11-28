@@ -1587,3 +1587,12 @@ em {
   .site-header.scrolled .header-inner { padding-top: 0.35rem; padding-bottom: 0.35rem; }
   .site-header.scrolled .logo-circle { width: 54px; height: 54px; }
 }
+
+/* ───────────────────────────────────────────────
+   LOGO (image) — remplace l'ancien logo rond
+─────────────────────────────────────────────── */
+.logo-img{display:block;height:96px;width:auto;transition:transform var(--dur-med) var(--ease),height var(--dur-med) var(--ease)}
+.header-logo:hover .logo-img{transform:scale(1.03)}
+.footer-logo-mark img{display:block;width:100%;height:100%;object-fit:contain}
+@media (max-width:768px){ .logo-img{height:62px} }
+@media (min-width:769px){ .site-header.scrolled .logo-img{height:58px} }
